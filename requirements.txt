@@ -1,0 +1,4 @@
+discord.py==0.16.12
+json.py
+requests.py
+BeautifulSoup.py
