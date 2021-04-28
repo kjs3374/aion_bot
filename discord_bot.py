@@ -2,7 +2,7 @@ import discord
 import requests
 import json
 from bs4 import BeautifulSoup
-import os
+
 
 client = discord.Client()
 
@@ -176,7 +176,6 @@ async def on_message(message):
         \n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {}"
         .format(user,className,raceName,guildName,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
         stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7]))
-
         
         
 access_token = os.environ["BOT_TOKEN"]        
