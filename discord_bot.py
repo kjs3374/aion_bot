@@ -2,7 +2,7 @@ import discord
 import requests
 import json
 from bs4 import BeautifulSoup
-
+import os
 
 client = discord.Client()
 
@@ -179,5 +179,5 @@ async def on_message(message):
 
         
         
-        
-client.run("ODM2ODU2Mjk2OTc1MTA2MDg4.YIkFKQ.XJ_-sjUEohHPzTQuxoUyPZu53IA")
+access_token = os.environ["BOT_TOKEN"]        
+client.run(access_token)
