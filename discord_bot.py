@@ -67,7 +67,7 @@ async def on_message(message):
             stiName.append(sti['name'])
         for eq in equip:
             eqName.append(eq['name'])
-        print(eqName)
+        #print(eqName)
         #변수매칭
         accuracy = totstat['accuracyRight']
         magicalAccuracy = totstat['magicalAccuracy']
