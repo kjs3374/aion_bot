@@ -369,16 +369,7 @@ async def on_message(message):
             sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8,\
             eqWp1,eqWp2,eqWp3,eqWp4,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin,eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,aionurl)
 
-        
-            #await message.channel.send\
-            #("기본정보\n닉네임 : {} \n클래스 : {}\n종족 : {} \n레기온 : {}\n어비스계급: {}\n전체 킬수: {}\n\
-            #\n\n스탯\n\n생명력 : {} \n마법저항 : {} \n방패방어 : {}\n공격력 : {} \n명중 : {} \n물리치명타 : {}\n마법적중 : {} \
-            #\n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {} \
-            #\n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}"\
-            #.format(user[userCnt],className,raceName,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
-            #stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7],\
-            #eqWp1,eqWp2,eqWp3,eqSheild,eqTorso,eqSh,eqLeg,eqHand,eqFoot,eqHead,eqNec,eqEar1,eqEar2,eqRing1,eqRing2,eqBelt,aionurl))
-            
+
             await message.channel.send(searchFin)
         
         
