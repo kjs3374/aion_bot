@@ -79,14 +79,23 @@ async def on_message(message):
             className = basicdata.get('jobName')
             raceName = basicdata.get('raceName')
             guildName = basicdata.get('guildName')
+            level = basicdata.get('level')
         
-            stiName = []
-            eqName = []
+            stiName = []    #스티그마
+            eqName = []     #장비이름
             eqInfo = []
-            eqRing = []
-            eqEar = []
-            eqWp = []
-            shCnt = 0
+            eqRing = []     #반지
+            eqEar = []      #귀고리
+            eqWp = []       #무기
+            eqNec = []      #목걸이
+            eqBelt = []     #허리띠
+            eqSh = []       #어깨
+            eqHand = []     #장갑
+            eqFoot = []     #신발
+            eqTorso = []    #상의
+            eqLeg = []      #하의
+            eqHead = []     #모자
+            eqSheild = []   #방패
             for sti in stigma:
                 stiName.append(sti['name'])
             for eq in equip:
@@ -98,79 +107,230 @@ async def on_message(message):
                     elif eqAcc == '귀고리':
                         eqEar.append(eq['name'])
                     elif eqAcc == '목걸이':
-                        eqNec = eq['name']
+                        eqNec.append(eq['name'])
                     elif eqAcc == '허리띠':
-                        eqBelt = eq['name']
+                        eqBelt.append(eq['name'])
                 elif eq['category1']['name'] == '방어구':
                     if eq['category3']['name'] == '어깨':
-                        eqSh = eq['name']
+                        eqShName = eq['name']
                         eqShEn = eq['enchantCount']
-                        eqSh = "+ {} {}".format(eqShEn,eqSh)
+                        eqSh.append("+ {} {}".format(eqShEn,eqShName))
+
                     elif eq['category3']['name'] == '장갑':
-                        eqHand = eq['name']
+                        eqHandName = eq['name']
                         eqHandEn = eq['enchantCount']
-                        eqHand = "+ {} {}".format(eqHandEn,eqHand)
+                        eqHand.append("+ {} {}".format(eqHandEn,eqHandName))
                     elif eq['category3']['name'] == '신발':
-                        eqFoot = eq['name']
+                        eqFootName = eq['name']
                         eqFootEn = eq['enchantCount']
-                        eqFoot = "+ {} {}".format(eqFootEn,eqFoot)
+                        eqFoot.append("+ {} {}".format(eqFootEn,eqFootName))
                     elif eq['category3']['name'] == '상의':
-                        eqTorso = eq['name']
+                        eqTorsoName = eq['name']
                         eqTorsoEn = eq['enchantCount']
-                        eqTorso = "+ {} {}".format(eqTorsoEn,eqTorso)
+                        eqTorso.append("+ {} {}".format(eqTorsoEn,eqTorsoName))
                     elif eq['category3']['name'] == '하의':
-                        eqLeg = eq['name']
+                        eqLegName = eq['name']
                         eqLegEn = eq['enchantCount']
-                        eqLeg = "+ {} {}".format(eqLegEn,eqLeg)
+                        eqLeg.append("+ {} {}".format(eqLegEn,eqLegName))
                     elif eq['category2']['name'] == '머리방어구':
-                        eqHead = eq['name']
+                        eqHead.append(eq['name'])
                     elif eq['category2']['name'] == '방패':
-                        eqSheild = eq['name']
+                        eqSheildName = eq['name']
                         eqShEn = (eq['enchantCount'])
-                        eqSheild = "+ {} {}".format(eqShEn,eqSheild)
-                        shCnt = 1
+                        eqSheild.append("+ {} {}".format(eqShEn,eqSheildName))
                 elif eq['category1']['name'] == '무기':
                     eqWeapon = (eq['name'])
                     eqWpEn = (eq['enchantCount'])
                     eqWeapon = "+ {} {}".format(eqWpEn,eqWeapon)
                     eqWp.append(eqWeapon)
             
-            eqRing1 = "반지 : {}".format(eqRing[0])
-            eqRing2 = "반지 : {}".format(eqRing[1])
-            eqEar1 = "귀고리 : {}".format(eqEar[0])
-            eqEar2 = "귀고리 : {}".format(eqEar[1])
-            eqNec = "목걸이 : {}".format(eqNec)
-            eqBelt = "허리띠 : {}".format(eqBelt)
-            eqSh = "어깨 : {}".format(eqSh)
-            eqHand = "장갑 : {}".format(eqHand)
-            eqFoot = "신발 : {}".format(eqFoot)
-            eqTorso = "상의 : {}".format(eqTorso)
-            eqLeg = "하의 : {}".format(eqLeg)
-            eqHead = "머리 : {}".format(eqHead)
+            #반지 확인
+            if len(eqRing) == 2:
+                eqRing1 = "반지 : {}".format(eqRing[0])
+                eqRing2 = "반지 : {}".format(eqRing[1])
+            elif len(eqRing) == 1:
+                eqRing1 = "반지 : {}".format(eqRing[0])
+                eqRing2 = "반지 : 없음"
+            elif len(eqRing) == 0:
+                eqRing1 = "반지 : 없음"
+                eqRing2 = "반지 : 없음"
+            
+            #귀고리 확인
+            if len(eqEar) == 2:
+                eqEar1 = "귀고리 : {}".format(eqEar[0])
+                eqEar2 = "귀고리 : {}".format(eqEar[1])
+            elif len(eqEar) == 1:
+                eqEar1 = "귀고리 : {}".format(eqEar[0])
+                eqEar2 = "귀고리 : 없음"
+            elif len(eqEar) == 0:
+                eqEar1 = "귀고리 : 없음"
+                eqEar2 = "귀고리 : 없음"
 
-            if shCnt == 1 :
-                eqSheild = ("방패 : {}".format(eqSheild))
+            #목걸이 확인
+            if len(eqNec) == 1 :
+                eqNecFin = "목걸이 : {}".format(eqNec[0])
+            else : 
+                eqNecFin = "목걸이 : 없음"
+                
+            #벨트 확인
+            if len(eqBelt) == 1:
+                eqBeltFin = "허리띠 : {}".format(eqBelt[0])
             else :
-                eqSheild = ("방패 : 없음")
-            if len(eqWp) == 3:
+                eqBeltFin = "허리띠 : 없음"
+            
+            #어깨 확인
+            if len(eqSh) == 1 :
+                eqShFin = "어깨 : {}".format(eqSh[0])
+            else :
+                eqShFin = "어깨 : 없음"
+            
+            #장갑 확인
+            if len(eqHand) == 1 :
+                eqHandFin = "장갑 : {}".format(eqHand[0])
+            else :
+                eqHandFin = "장갑 : 없음"
+                
+            #신발 확인
+            if len(eqFoot) == 1 :
+                eqFootFin = "신발 : {}".format(eqFoot[0])
+            else :
+                eqFootFin = "신발 : 없음"
+            
+            #상의 확인
+            if len(eqTorso) == 1:
+                eqTorsoFin = "상의 : {}".format(eqTorso[0])
+            else :
+                eqTorsoFin = "상의 : 없음"
+                
+            #하의 확인
+            if len(eqLeg) == 1:
+                eqLegFin = "하의 : {}".format(eqLeg[0])
+            else :
+                eqLegFin = "하의 : 없음"
+            
+            #머리 확인
+            if len(eqHead) == 1:
+                eqHeadFin = "머리 : {}".format(eqHead[0])
+            else :
+                eqHeadFin = "머리 : 없음"
+            
+            #방패 확인
+            if len(eqSheild) == 1 :
+                eqSheildFin = "방패 : {}".format(eqSheild[0])
+            else :
+                eqSheildFin = "방패 : 없음"
+
+            #무기 확인
+            if len(eqWp) == 4:
                 eqWp1 = "무기 : {}".format(eqWp[0])
                 eqWp2 = "무기 : {}".format(eqWp[1])
                 eqWp3 = "무기 : {}".format(eqWp[2])
+                eqWp4 = "무기 : {}".format(eqWp[3])
+            elif len(eqWp) == 3:
+                eqWp1 = "무기 : {}".format(eqWp[0])
+                eqWp2 = "무기 : {}".format(eqWp[1])
+                eqWp3 = "무기 : {}".format(eqWp[2])
+                eqWp4 = "무기 : 없음"
             elif len(eqWp) == 2:
                 eqWp1 = "무기 : {}".format(eqWp[0])
                 eqWp2 = "무기 : {}".format(eqWp[1])
                 eqWp3 = "무기 : 없음"
+                eqWp4 = "무기 : 없음"
             elif len(eqWp) == 1:
                 eqWp1 = "무기 : {}".format(eqWp[0])
                 eqWp2 = "무기 : 없음"
                 eqWp3 = "무기 : 없음"
+                eqWp4 = "무기 : 없음"
             elif len(eqWp) == 0:
                 eqWp1 = "무기 : 없음"
                 eqWp2 = "무기 : 없음"
-                eqWp3 = "무기 : 없음"            
-        
-            #print(eqName)
-            #변수매칭
+                eqWp3 = "무기 : 없음"
+                eqWp4 = "무기 : 없음"
+
+            #스티 확인
+            if len(stiName) == 8:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : {}".format(stiName[2])
+                sti4 = "스티그마 : {}".format(stiName[3])
+                sti5 = "스티그마 : {}".format(stiName[4])
+                sti6 = "스티그마 : {}".format(stiName[5])
+                sti7 = "스티그마 : {}".format(stiName[6])
+                sti8 = "스티그마 : {}".format(stiName[7])
+            elif len(stiName) == 7:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : {}".format(stiName[2])
+                sti4 = "스티그마 : {}".format(stiName[3])
+                sti5 = "스티그마 : {}".format(stiName[4])
+                sti6 = "스티그마 : {}".format(stiName[5])
+                sti7 = "스티그마 : {}".format(stiName[6])
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 6:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : {}".format(stiName[2])
+                sti4 = "스티그마 : {}".format(stiName[3])
+                sti5 = "스티그마 : {}".format(stiName[4])
+                sti6 = "스티그마 : {}".format(stiName[5])
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 5:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : {}".format(stiName[2])
+                sti4 = "스티그마 : {}".format(stiName[3])
+                sti5 = "스티그마 : {}".format(stiName[4])
+                sti6 = "스티그마 : 없음"
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 4:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : {}".format(stiName[2])
+                sti4 = "스티그마 : {}".format(stiName[3])
+                sti5 = "스티그마 : 없음"
+                sti6 = "스티그마 : 없음"
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 3:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : {}".format(stiName[2])
+                sti4 = "스티그마 : 없음"
+                sti5 = "스티그마 : 없음"
+                sti6 = "스티그마 : 없음"
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 2:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : {}".format(stiName[1])
+                sti3 = "스티그마 : 없음"
+                sti4 = "스티그마 : 없음"
+                sti5 = "스티그마 : 없음"
+                sti6 = "스티그마 : 없음"
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 1:
+                sti1 = "스티그마 : {}".format(stiName[0])
+                sti2 = "스티그마 : 없음"
+                sti3 = "스티그마 : 없음"
+                sti4 = "스티그마 : 없음"
+                sti5 = "스티그마 : 없음"
+                sti6 = "스티그마 : 없음"
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+            elif len(stiName) == 0:
+                sti1 = "스티그마 : 없음"
+                sti2 = "스티그마 : 없음"
+                sti3 = "스티그마 : 없음"
+                sti4 = "스티그마 : 없음"
+                sti5 = "스티그마 : 없음"
+                sti6 = "스티그마 : 없음"
+                sti7 = "스티그마 : 없음"
+                sti8 = "스티그마 : 없음"
+
+            #변수 version 1 (21.05.03 이전)
             accuracy = totstat['accuracyRight']
             magicalAccuracy = totstat['magicalAccuracy']
             attack = totstat['physicalRight']
@@ -178,19 +338,52 @@ async def on_message(message):
             magicResist = totstat['magicResist']
             critical = totstat['criticalRight']
             block = totstat['block']
+            magicalBoost = totstat['magicalBoost']
+
+            #변수 version 2 (21.05.03)
+            nick = "닉네임 : {}".format(user[userCnt])
+            className = "클래스 : {}".format(className)
+            level = "레벨 : {}".format(level)
+            basic = nick + " / " + className + " / " + level
+            raceName = "종족 : {}".format(raceName)
+            guildName = "레기온 : {}".format(guildName)
+            rankName = "어비스계급 : {}".format(rankName)
+            totalKill = "전체킬수  {}".format(totalKill)
+            hp = "생명력 : {}".format(hp)
+            magicResist = "마법저항 : {}".format(magicResist)
+            block = "방패방어 : {}".format(block)
+            attack = "공격력 : {}".format(attack)
+            accuracy = "명중 : {}".format(accuracy)
+            critical = "물리치명타 : {}".format(critical)
+            magicalBoost = "마법증폭력 : {}".format(magicalBoost)
+            magicalAccuracy = "마법적중 : {}".format(magicalAccuracy)
+            
+            #출력
+            
+            searchFin = "기본정보\n\n{}\n{}\n{}\n{}\n\
+            \n\n스탯\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n\
+            \n\n스티그마\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
+            \n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
+            \n\n공식홈페이지 링크\n{}"\
+            .format(basic,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy,\
+            sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8,\
+            eqWp1,eqWp2,eqWp3,eqWp4,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin,eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,aionurl)
+
         
-            await message.channel.send\
-            ("기본정보\n닉네임 : {} \n클래스 : {}\n종족 : {} \n레기온 : {}\n어비스계급: {}\n전체 킬수: {}\n\
-            \n\n스탯\n\n생명력 : {} \n마법저항 : {} \n방패방어 : {}\n공격력 : {} \n명중 : {} \n물리치명타 : {}\n마법적중 : {} \
-            \n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {} \
-            \n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}"\
-            .format(user[userCnt],className,raceName,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
-            stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7],\
-            eqWp1,eqWp2,eqWp3,eqSheild,eqTorso,eqSh,eqLeg,eqHand,eqFoot,eqHead,eqNec,eqEar1,eqEar2,eqRing1,eqRing2,eqBelt,aionurl))
+            #await message.channel.send\
+            #("기본정보\n닉네임 : {} \n클래스 : {}\n종족 : {} \n레기온 : {}\n어비스계급: {}\n전체 킬수: {}\n\
+            #\n\n스탯\n\n생명력 : {} \n마법저항 : {} \n방패방어 : {}\n공격력 : {} \n명중 : {} \n물리치명타 : {}\n마법적중 : {} \
+            #\n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {} \
+            #\n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}"\
+            #.format(user[userCnt],className,raceName,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
+            #stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7],\
+            #eqWp1,eqWp2,eqWp3,eqSheild,eqTorso,eqSh,eqLeg,eqHand,eqFoot,eqHead,eqNec,eqEar1,eqEar2,eqRing1,eqRing2,eqBelt,aionurl))
+            
+            await message.channel.send(searchFin)
         
         
             
         
         
 
-client.run('ODM2ODU2Mjk2OTc1MTA2MDg4.YIkFKQ.NekzKlebFgozpj28B27dYqwW3Mc')
+client.run('봇 ')
