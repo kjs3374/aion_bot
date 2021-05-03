@@ -348,7 +348,7 @@ async def on_message(message):
             raceName = "종족 : {}".format(raceName)
             guildName = "레기온 : {}".format(guildName)
             rankName = "어비스계급 : {}".format(rankName)
-            totalKill = "전체킬수  {}".format(totalKill)
+            totalKill = "전체킬수 : {}".format(totalKill)
             hp = "생명력 : {}".format(hp)
             magicResist = "마법저항 : {}".format(magicResist)
             block = "방패방어 : {}".format(block)
