@@ -358,23 +358,343 @@ async def on_message(message):
             magicalBoost = "마법증폭력 : {}".format(magicalBoost)
             magicalAccuracy = "마법적중 : {}".format(magicalAccuracy)
             
+            #pvp 추뎀 산출
+            
+            #반지1
+            if eqRing1.find("십부장") >= 0:
+                pvpRing1 = 1.6
+            elif eqRing1.find("백부장") >= 0:
+                pvpRing1 = 1.8
+            elif eqRing1.find("천부장") >= 0:
+                pvpRing1 = 2.0
+            else :
+                pvpRing1 = 0
+            
+            #반지2
+            if eqRing2.find("십부장") >= 0:
+                pvpRing2 = 1.6
+            elif eqRing2.find("백부장") >= 0:
+                pvpRing2 = 1.8
+            elif eqRing2.find("천부장") >= 0:
+                pvpRing2 = 2.0
+            else :
+                pvpRing2 = 0
+                
+            #귀고리1
+            if eqEar1.find("십부장") >= 0:
+                pvpEar1 = 2.4
+            elif eqEar1.find("백부장") >= 0:
+                pvpEar1 = 2.7
+            elif eqEar1.find("천부장") >= 0:
+                pvpEar1 = 3.0
+            else :
+                pvpEar1 = 0
+
+            #귀고리2
+            if eqEar2.find("십부장") >= 0:
+                pvpEar2 = 2.4
+            elif eqEar2.find("백부장") >= 0:
+                pvpEar2 = 2.7
+            elif eqEar2.find("천부장") >= 0:
+                pvpEar2 = 3.0
+            else :
+                pvpEar2 = 0
+            
+            #목걸이
+            if eqNecFin.find("십부장") >= 0:
+                pvpNec = 3.2
+            elif eqNecFin.find("백부장") >= 0:
+                pvpNec = 3.6
+            elif eqNecFin.find("천부장") >= 0:
+                pvpNec = 4.0               
+            else :
+                pvpNec = 0
+            
+            #벨트
+            if eqBeltFin.find("십부장") >= 0:
+                pvpBelt = 1.6
+            elif eqBeltFin.find("백부장") >= 0:
+                pvpBelt = 1.8
+            elif eqBeltFin.find("천부장") >= 0:
+                pvpBelt = 2.0
+            else :
+                pvpBelt = 0
+            
+            #무기
+            
+            #무기1
+            if eqWp1.find("단도") >= 0:
+                if eqWp1.find("십부") >= 0:
+                    pvpWp1 = 4.8
+                elif eqWp1.find("백부") >= 0:
+                    pvpWp1 = 5.4
+                elif eqWp1.find("천부") >= 0:
+                    pvpWp1 = 6.0
+                else :
+                    pvpWp1 = 0
+            elif eqWp1.find("검") >= 0:
+                if eqWp1.find("십부") >= 0:
+                    pvpWp1 = 4.8
+                elif eqWp1.find("백부") >= 0:
+                    pvpWp1 = 5.4
+                elif eqWp1.find("천부") >= 0:
+                    pvpWp1 = 6.0
+                else :
+                    pvpWp1 = 0 
+            elif eqWp1.find("전투망치") >= 0:
+                if eqWp1.find("십부") >= 0:
+                    pvpWp1 = 4.8
+                elif eqWp1.find("백부") >= 0:
+                    pvpWp1 = 5.4
+                elif eqWp1.find("천부") >= 0:
+                    pvpWp1 = 6.0
+                else :
+                    pvpWp1 = 0 
+            else :
+                if eqWp1.find("십부") >= 0:
+                    pvpWp1 = 8.0
+                elif eqWp1.find("백부") >= 0:
+                    pvpWp1 = 9.0
+                elif eqWp1.find("천부") >= 0:
+                    pvpWp1 = 10.0
+                else :
+                    pvpWp1 = 0 
+            
+            #무기2
+            if eqWp2.find("단도") >= 0:
+                if eqWp2.find("십부") >= 0:
+                    pvpWp2 = 4.8
+                elif eqWp2.find("백부") >= 0:
+                    pvpWp2 = 5.4
+                elif eqWp2.find("천부") >= 0:
+                    pvpWp2 = 6.0
+                else :
+                    pvpWp2 = 0
+            elif eqWp2.find("검") >= 0:
+                if eqWp2.find("십부") >= 0:
+                    pvpWp2 = 4.8
+                elif eqWp2.find("백부") >= 0:
+                    pvpWp2 = 5.4
+                elif eqWp2.find("천부") >= 0:
+                    pvpWp2 = 6.0
+                else :
+                    pvpWp2 = 0 
+            elif eqWp2.find("전투망치") >= 0:
+                if eqWp2.find("십부") >= 0:
+                    pvpWp2 = 4.8
+                elif eqWp2.find("백부") >= 0:
+                    pvpWp2 = 5.4
+                elif eqWp2.find("천부") >= 0:
+                    pvpWp2 = 6.0
+                else :
+                    pvpWp2 = 0 
+            else :
+                if eqWp2.find("십부") >= 0:
+                    pvpWp2 = 8.0
+                elif eqWp2.find("백부") >= 0:
+                    pvpWp2 = 9.0
+                elif eqWp2.find("천부") >= 0:
+                    pvpWp2 = 10.0
+                else :
+                    pvpWp2 = 0
+
+            #무기3
+            if eqWp3.find("단도") >= 0:
+                if eqWp3.find("십부") >= 0:
+                    pvpWp3 = 4.8
+                elif eqWp3.find("백부") >= 0:
+                    pvpWp3 = 5.4
+                elif eqWp3.find("천부") >= 0:
+                    pvpWp3 = 6.0
+                else :
+                    pvpWp3 = 0
+            elif eqWp3.find("검") >= 0:
+                if eqWp3.find("십부") >= 0:
+                    pvpWp3 = 4.8
+                elif eqWp3.find("백부") >= 0:
+                    pvpWp3 = 5.4
+                elif eqWp3.find("천부") >= 0:
+                    pvpWp3 = 6.0
+                else :
+                    pvpWp3 = 0 
+            elif eqWp3.find("전투망치") >= 0:
+                if eqWp3.find("십부") >= 0:
+                    pvpWp3 = 4.8
+                elif eqWp3.find("백부") >= 0:
+                    pvpWp3 = 5.4
+                elif eqWp3.find("천부") >= 0:
+                    pvpWp3 = 6.0
+                else :
+                    pvpWp3 = 0 
+            else :
+                if eqWp3.find("십부") >= 0:
+                    pvpWp3 = 8.0
+                elif eqWp3.find("백부") >= 0:
+                    pvpWp3 = 9.0
+                elif eqWp3.find("천부") >= 0:
+                    pvpWp3 = 10.0
+                else :
+                    pvpWp3 = 0
+            
+            #무기4
+            if eqWp4.find("단도") >= 0:
+                if eqWp4.find("십부") >= 0:
+                    pvpWp4 = 4.8
+                elif eqWp4.find("백부") >= 0:
+                    pvpWp4 = 5.4
+                elif eqWp4.find("천부") >= 0:
+                    pvpWp4 = 6.0
+                else :
+                    pvpWp4 = 0
+            elif eqWp4.find("검") >= 0:
+                if eqWp4.find("십부") >= 0:
+                    pvpWp4 = 4.8
+                elif eqWp4.find("백부") >= 0:
+                    pvpWp4 = 5.4
+                elif eqWp4.find("천부") >= 0:
+                    pvpWp4 = 6.0
+                else :
+                    pvpWp4 = 0 
+            elif eqWp4.find("전투망치") >= 0:
+                if eqWp4.find("십부") >= 0:
+                    pvpWp4 = 4.8
+                elif eqWp4.find("백부") >= 0:
+                    pvpWp4 = 5.4
+                elif eqWp4.find("천부") >= 0:
+                    pvpWp4 = 6.0
+                else :
+                    pvpWp4 = 0 
+            else :
+                if eqWp4.find("십부") >= 0:
+                    pvpWp4 = 8.0
+                elif eqWp4.find("백부") >= 0:
+                    pvpWp4 = 9.0
+                elif eqWp4.find("천부") >= 0:
+                    pvpWp4 = 10.0
+                else :
+                    pvpWp4 = 0
+                    
+                    
+            #pvp 방어 산출
+            
+            #상의
+            if eqTorsoFin.find("십부") >= 0:
+                pvpTorso = 4
+            elif eqTorsoFin.find("백부") >= 0:
+                pvpTorso = 4.5
+            elif eqTorsoFin.find("천부") >= 0:
+                pvpTorso = 5.0    
+            else :
+                pvpTorso = 0
+
+            #하의
+            if eqLegFin.find("십부") >= 0:
+                pvpLeg = 3.2
+            elif eqLegFin.find("백부") >= 0:
+                pvpLeg = 3.6
+            elif eqLegFin.find("천부") >= 0:
+                pvpLeg = 4.0    
+            else :
+                pvpLeg = 0
+
+            #어깨
+            if eqShFin.find("십부") >= 0:
+                pvpSh = 2.4
+            elif eqShFin.find("백부") >= 0:
+                pvpSh = 2.7
+            elif eqShFin.find("천부") >= 0:
+                pvpSh = 3.0    
+            else :
+                pvpSh = 0
+                
+            #장갑
+            if eqHandFin.find("십부") >= 0:
+                pvpHand = 2.4
+            elif eqHandFin.find("백부") >= 0:
+                pvpHand = 2.7
+            elif eqHandFin.find("천부") >= 0:
+                pvpHand = 3.0    
+            else :
+                pvpHand = 0
+                
+            #신발
+            if eqFootFin.find("십부") >= 0:
+                pvpFoot = 2.4
+            elif eqFootFin.find("백부") >= 0:
+                pvpFoot = 2.7
+            elif eqFootFin.find("천부") >= 0:
+                pvpFoot = 3.0    
+            else :
+                pvpFoot = 0
+                
+            #머리
+            if eqHeadFin.find("십부") >= 0:
+                pvpHead = 1.6
+            elif eqHeadFin.find("백부") >= 0:
+                pvpHead = 1.8
+            elif eqHeadFin.find("천부") >= 0:
+                pvpHead = 2.0
+            else :
+                pvpHead = 0
+                
+            #방패
+            if eqSheildFin.find("십부") >= 0:
+                pvpSheild = 4
+            elif eqSheildFin.find("백부") >= 0:
+                pvpSheild = 4.5
+            elif eqSheildFin.find("천부") >= 0:
+                pvpSheild = 5.0    
+            else :
+                pvpSheild = 0
+            
+            #pvp방어 합계
+            pvpDef = pvpTorso + pvpLeg + pvpSh + pvpHand + pvpFoot + pvpHead + pvpSheild
+            
+            #pvp추뎀 합계
+            pvpAcc = pvpRing1 + pvpRing2 + pvpEar1 + pvpEar2 + pvpNec + pvpBelt
+            pvpAtt = pvpAcc + pvpWp1 + pvpWp2 + pvpWp3 + pvpWp4
+            #if eqWp1.find("단도") >= 0 :
+            #    pvpAtt = pvpAcc + pvpWp1 + pvpWp2
+            #elif eqWp1.find("검") >= 0 :
+            #    if eqSheildFin.find("없음") >= 0 :
+            #        pvpAtt = pvpAcc + pvpWp1 + pvpWp2
+            #    else :
+            #        pvpAtt = pvpAcc + pvpWp1
+            #elif eqWp1.find("전투망치") >= 0:
+            #    if eqSheildFin.find("없음") >= 0 :
+            #        pvpAtt = pvpAcc + pvpWp1 + pvpWp2
+            #    else :
+            #        pvpAtt = pvpAcc + pvpWp1
+            
+                
+            pvpDefFin = "PVP 방어력 : {}%".format(pvpDef)
+            pvpAttFin = "PVP 공격력 : {}%".format(pvpAtt)
+            pvpInfo = "PVP 관련수치는 정확하지 않으니 참고만 부탁드립니다."
+            
             #출력
             
             searchFin = "기본정보\n\n{}\n{}\n{}\n{}\n\
             \n\n스탯\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n\
             \n\n스티그마\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
             \n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
+            \n\nPVP추가수치\n\n{}\n{}\n{}\
             \n\n공식홈페이지 링크\n{}"\
             .format(basic,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy,\
             sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8,\
-            eqWp1,eqWp2,eqWp3,eqWp4,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin,eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,aionurl)
+            eqWp1,eqWp2,eqWp3,eqWp4,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin,eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,\
+            pvpAttFin,pvpDefFin,pvpInfo,aionurl)
 
-
+        
+            #await message.channel.send\
+            #("기본정보\n닉네임 : {} \n클래스 : {}\n종족 : {} \n레기온 : {}\n어비스계급: {}\n전체 킬수: {}\n\
+            #\n\n스탯\n\n생명력 : {} \n마법저항 : {} \n방패방어 : {}\n공격력 : {} \n명중 : {} \n물리치명타 : {}\n마법적중 : {} \
+            #\n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {} \
+            #\n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}"\
+            #.format(user[userCnt],className,raceName,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
+            #stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7],\
+            #eqWp1,eqWp2,eqWp3,eqSheild,eqTorso,eqSh,eqLeg,eqHand,eqFoot,eqHead,eqNec,eqEar1,eqEar2,eqRing1,eqRing2,eqBelt,aionurl))
+            
             await message.channel.send(searchFin)
         
-        
-            
-        
-        
 
-client.run('봇 ')
+client.run('봇 토큰')
