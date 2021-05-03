@@ -1,700 +1,782 @@
 import discord
+from discord.ext import commands
 import requests
 import json
 
-
+SID = 0
 client = discord.Client()
+client = commands.Bot(command_prefix='!!') #접두사
 
 @client.event
 async def on_ready():
     print(client.user.id)
     print("ready")
 
-@client.event
-async def on_message(message):
-    if message.content.startswith("검색봇 확인"):
-        await message.channel.send("작동중")
-    if message.content.startswith("작동확인"):
-        await message.channel.send("작동중")
-    if message.content.startswith("검색"):
-        user = []
-        
-        allUser = message.content.split()
-        for user1 in allUser:
-            user.append(user1)
-        
-        for userCnt in range(1,len(user)):
-        
-            url = 'https://api-aion.plaync.com/search/v1/characters?classId=&pageNo=1&pageSize=20&query={}&raceId=&serverId=21&site=aion&sort=rank&world=classic'.format(user[userCnt])
-            req = requests.get(url).content
+@client.command()
+async def 도움말(ctx):
+    helpEmbed = discord.Embed(title="검색 봇 도움말", description ="클래식 검색봇 명령어 리스트")
+    helpEmbed.add_field(name="!!서버리스트",value="아이온클래식 전체 서버리스트 출력",inline=False)
+    helpEmbed.add_field(name="!!서버",value="!!서버 [서버이름]\n검색할 서버설정\n설정전까지 동일 서버로 검색",inline=False)
+    helpEmbed.add_field(name="!!현재서버",value="현재 설정되어있는 서버 출력",inline=False)
+    helpEmbed.add_field(name="!!검색",value="!!검색 [검색아이디1] [검색아이디2] ... [검색아이디...]\n띄어쓰기로 캐릭터명 구분\n입력한 캐릭터 명 만큼 검색",inline=False)
+    await ctx.send(embed=helpEmbed)
+    
+@client.command()
+async def 명령어(ctx):
+    helpEmbed = discord.Embed(title="검색 봇 도움말", description ="클래식 검색봇 명령어 리스트")
+    helpEmbed.add_field(name="!!서버리스트",value="아이온클래식 전체 서버리스트 출력",inline=False)
+    helpEmbed.add_field(name="!!서버",value="!!서버 [서버이름]\n검색할 서버설정\n설정전까지 동일 서버로 검색",inline=False)
+    helpEmbed.add_field(name="!!현재서버",value="현재 설정되어있는 서버 출력",inline=False)
+    helpEmbed.add_field(name="!!검색",value="!!검색 [검색아이디1] [검색아이디2] ... [검색아이디...]\n띄어쓰기로 캐릭터명 구분\n입력한 캐릭터 명 만큼 검색",inline=False)
+    await ctx.send(embed=helpEmbed)
+    
+@client.command()
+async def 현재서버 (ctx):
+    global serverName
+    global SID
+    if SID == 0 :
+        infotxt = "현재 적용중인 서버가 없습니다.\n서버를 설정해 주세요"
+    else :
+        infotxt = "현재 적용중인 서버는 {}서버 입니다.".format(serverName)
+    SvInfo = discord.Embed(title="검색봇 현재연결서버", description="{}".format(infotxt))
+    await ctx.send(embed=SvInfo)
 
-            data = json.loads(req)
+@client.command()
+async def 서버리스트 (ctx):
+    SLembed = discord.Embed(title="아이온클래식 서버 리스트", description="이스라펠\n네자칸\n지켈\n바이젤\n트리니엘\n카이시넬\n루미엘")
+    await ctx.send(embed=SLembed)
 
-            charname = data.get("documents")[0].get("charName")
-            uid = data.get("documents")[0].get("charId")
+@client.command()
+async def 서버(ctx,*,server):
 
-            aionurl = 'https://aion.plaync.com/characters/server/21/id/{}/home'.format(uid)
-            await message.channel.send (aionurl)
+    global SID
+    global serverName
+    serverName = server
+    SID = 0
+    serverList = "이스라펠,네자칸,지켈,바이젤,트리니엘,카이시넬,루미엘"
+    if serverList.find(server) >= 0:
+        await ctx.send("서버를 {}로 설정합니다.".format(server))
+        #serverId 설정
+        if serverName == "이스라펠" :
+            SID = 21
+        if serverName == "네자칸" :
+            SID = 22
+        if serverName == "지켈" :
+            SID = 23
+        if serverName == "바이젤" :
+            SID = 24
+        if serverName == "트리니엘" :
+            SID = 25
+        if serverName == "카이시넬" :
+            SID = 26
+        if serverName == "루미엘" :
+            SID = 27
+    
+    else :
+        await ctx.send("서버를 설정할 수 없습니다.")
+    print("서버이름 : {}\n서버아이디 : {}".format(server,SID))
+      
+@client.command()
+async def 검색(ctx,*,searchUsers):
 
-    if message.content.startswith("!검색"):
-        user = []
+    global SID
+    global serverName
+    allUser = []
+    user = []
+    allUser = searchUsers.split()
+    print(allUser)
+    for user1 in allUser:
+        user.append(user1)
         
-        allUser = message.content.split()
-        for user1 in allUser:
-            user.append(user1)
+    for userCnt in range(0,len(user)):
+    
+        if SID == 0:
+            await ctx.send("서버설정을 먼저 해주시기 바랍니다.")
+        else:
+            url = 'https://api-aion.plaync.com/search/v1/characters?classId=&pageNo=1&pageSize=20&query={}&raceId=&serverId={}&site=aion&sort=rank&world=classic'.format(user[userCnt],SID)
             
-        for userCnt in range(1,len(user)):
-        
-            url = 'https://api-aion.plaync.com/search/v1/characters?classId=&pageNo=1&pageSize=20&query={}&raceId=&serverId=21&site=aion&sort=rank&world=classic'.format(user[userCnt])
-            req = requests.get(url).content
+        req = requests.get(url).content
 
-        
-            data = json.loads(req)
+    
+        data = json.loads(req)
 
-            uid = data.get("documents")[0].get("charId")
+        uid = data.get("documents")[0].get("charId")
+    
+        #아이온 api 주소 + 캐릭터 ID
+        srcurl = 'https://api-aion.plaync.com/game/v2/classic/merge/server/{}/id/{}'.format(SID,uid)
+        basicinfo = 'https://api-aion.plaync.com/game/v2/classic/characters/server/{}/id/{}'.format(SID,uid)
+        aionurl = 'https://aion.plaync.com/characters/server/{}/id/{}/home'.format(SID,uid)    
+        #keyList
+        payload = {'keyList' : ["character_stats","character_equipments","character_abyss","character_stigma"]}
+    
+        #아이온 api 호출
+        reqsrc = requests.put(srcurl, json=payload).content
+        basicsrc = requests.get(basicinfo).content
+    
+        #아이온 데이터 json 변환
+        datasrc = json.loads(reqsrc)
+        basicdata = json.loads(basicsrc)
+    
+    
+        chrstat = datasrc['character_stats']
+        #totstat = chrstat['totalStat']
+        totstat = datasrc['character_stats']['totalStat']
+        stigma = datasrc['character_stigma']
+        equip = datasrc['character_equipments']
+        rankName = datasrc['character_abyss']['rankName']
+        totalKill = datasrc['character_abyss']['totalKillCount']
+        className = basicdata.get('jobName')
+        raceName = basicdata.get('raceName')
+        guildName = basicdata.get('guildName')
+        level = basicdata.get('level')
+    
+        stiName = []    #스티그마
+        eqName = []     #장비이름
+        eqInfo = []
+        eqRing = []     #반지
+        eqEar = []      #귀고리
+        eqWp = []       #무기
+        eqNec = []      #목걸이
+        eqBelt = []     #허리띠
+        eqSh = []       #어깨
+        eqHand = []     #장갑
+        eqFoot = []     #신발
+        eqTorso = []    #상의
+        eqLeg = []      #하의
+        eqHead = []     #모자
+        eqSheild = []   #방패
+        eqWing = []     #날개
         
-            #아이온 api 주소 + 캐릭터 ID
-            srcurl = 'https://api-aion.plaync.com/game/v2/classic/merge/server/21/id/{}'.format(uid)
-            basicinfo = 'https://api-aion.plaync.com/game/v2/classic/characters/server/21/id/{}'.format(uid)
-            aionurl = 'https://aion.plaync.com/characters/server/21/id/{}/home'.format(uid)        
-            #keyList
-            payload = {'keyList' : ["character_stats","character_equipments","character_abyss","character_stigma"]}
+        for sti in stigma:
+            stiName.append(sti['name'])
         
-            #아이온 api 호출
-            reqsrc = requests.put(srcurl, json=payload).content
-            basicsrc = requests.get(basicinfo).content
+        for eq in equip:
         
-            #아이온 데이터 json 변환
-            datasrc = json.loads(reqsrc)
-            basicdata = json.loads(basicsrc)
-        
-        
-            chrstat = datasrc['character_stats']
-            #totstat = chrstat['totalStat']
-            totstat = datasrc['character_stats']['totalStat']
-            stigma = datasrc['character_stigma']
-            equip = datasrc['character_equipments']
-            rankName = datasrc['character_abyss']['rankName']
-            totalKill = datasrc['character_abyss']['totalKillCount']
-            className = basicdata.get('jobName')
-            raceName = basicdata.get('raceName')
-            guildName = basicdata.get('guildName')
-            level = basicdata.get('level')
-        
-            stiName = []    #스티그마
-            eqName = []     #장비이름
-            eqInfo = []
-            eqRing = []     #반지
-            eqEar = []      #귀고리
-            eqWp = []       #무기
-            eqNec = []      #목걸이
-            eqBelt = []     #허리띠
-            eqSh = []       #어깨
-            eqHand = []     #장갑
-            eqFoot = []     #신발
-            eqTorso = []    #상의
-            eqLeg = []      #하의
-            eqHead = []     #모자
-            eqSheild = []   #방패
-            for sti in stigma:
-                stiName.append(sti['name'])
-            for eq in equip:
-                #eqName.append(eq['name'])
-                if eq['category1']['name'] == '장신구':
-                    eqAcc = eq['category2']['name']
-                    if eqAcc == '반지':
-                        eqRing.append(eq['name'])
-                    elif eqAcc == '귀고리':
-                        eqEar.append(eq['name'])
-                    elif eqAcc == '목걸이':
-                        eqNec.append(eq['name'])
-                    elif eqAcc == '허리띠':
-                        eqBelt.append(eq['name'])
-                elif eq['category1']['name'] == '방어구':
-                    if eq['category3']['name'] == '어깨':
-                        eqShName = eq['name']
-                        eqShEn = eq['enchantCount']
-                        eqSh.append("+ {} {}".format(eqShEn,eqShName))
-
-                    elif eq['category3']['name'] == '장갑':
-                        eqHandName = eq['name']
-                        eqHandEn = eq['enchantCount']
-                        eqHand.append("+ {} {}".format(eqHandEn,eqHandName))
-                    elif eq['category3']['name'] == '신발':
-                        eqFootName = eq['name']
-                        eqFootEn = eq['enchantCount']
-                        eqFoot.append("+ {} {}".format(eqFootEn,eqFootName))
-                    elif eq['category3']['name'] == '상의':
-                        eqTorsoName = eq['name']
-                        eqTorsoEn = eq['enchantCount']
-                        eqTorso.append("+ {} {}".format(eqTorsoEn,eqTorsoName))
-                    elif eq['category3']['name'] == '하의':
-                        eqLegName = eq['name']
-                        eqLegEn = eq['enchantCount']
-                        eqLeg.append("+ {} {}".format(eqLegEn,eqLegName))
-                    elif eq['category2']['name'] == '머리방어구':
-                        eqHead.append(eq['name'])
-                    elif eq['category2']['name'] == '방패':
-                        eqSheildName = eq['name']
-                        eqShEn = (eq['enchantCount'])
-                        eqSheild.append("+ {} {}".format(eqShEn,eqSheildName))
-                elif eq['category1']['name'] == '무기':
-                    eqWeapon = (eq['name'])
-                    eqWpEn = (eq['enchantCount'])
-                    eqWeapon = "+ {} {}".format(eqWpEn,eqWeapon)
-                    eqWp.append(eqWeapon)
-            
-            #반지 확인
-            if len(eqRing) == 2:
-                eqRing1 = "반지 : {}".format(eqRing[0])
-                eqRing2 = "반지 : {}".format(eqRing[1])
-            elif len(eqRing) == 1:
-                eqRing1 = "반지 : {}".format(eqRing[0])
-                eqRing2 = "반지 : 없음"
-            elif len(eqRing) == 0:
-                eqRing1 = "반지 : 없음"
-                eqRing2 = "반지 : 없음"
-            
-            #귀고리 확인
-            if len(eqEar) == 2:
-                eqEar1 = "귀고리 : {}".format(eqEar[0])
-                eqEar2 = "귀고리 : {}".format(eqEar[1])
-            elif len(eqEar) == 1:
-                eqEar1 = "귀고리 : {}".format(eqEar[0])
-                eqEar2 = "귀고리 : 없음"
-            elif len(eqEar) == 0:
-                eqEar1 = "귀고리 : 없음"
-                eqEar2 = "귀고리 : 없음"
-
-            #목걸이 확인
-            if len(eqNec) == 1 :
-                eqNecFin = "목걸이 : {}".format(eqNec[0])
-            else : 
-                eqNecFin = "목걸이 : 없음"
+            if eq['category1']['name'] == '장신구':
+                eqAcc = eq['category2']['name']
+                if eqAcc == '반지':
+                    eqRing.append(eq['name'])
+                elif eqAcc == '귀고리':
+                    eqEar.append(eq['name'])
+                elif eqAcc == '목걸이':
+                    eqNec.append(eq['name'])
+                elif eqAcc == '허리띠':
+                    eqBelt.append(eq['name'])
+            elif eq['category1']['name'] == '방어구':
+                if eq['category3']['name'] == '어깨':
+                    eqShName = eq['name']
+                    eqShEn = eq['enchantCount']
+                    eqSh.append("+ {} {}".format(eqShEn,eqShName))
+                elif eq['category3']['name'] == '장갑':
+                    eqHandName = eq['name']
+                    eqHandEn = eq['enchantCount']
+                    eqHand.append("+ {} {}".format(eqHandEn,eqHandName))
+                elif eq['category3']['name'] == '신발':
+                    eqFootName = eq['name']
+                    eqFootEn = eq['enchantCount']
+                    eqFoot.append("+ {} {}".format(eqFootEn,eqFootName))
+                elif eq['category3']['name'] == '상의':
+                    eqTorsoName = eq['name']
+                    eqTorsoEn = eq['enchantCount']
+                    eqTorso.append("+ {} {}".format(eqTorsoEn,eqTorsoName))
+                elif eq['category3']['name'] == '하의':
+                    eqLegName = eq['name']
+                    eqLegEn = eq['enchantCount']
+                    eqLeg.append("+ {} {}".format(eqLegEn,eqLegName))
+                elif eq['category2']['name'] == '머리방어구':
+                    eqHead.append(eq['name'])
+                elif eq['category2']['name'] == '방패':
+                    eqSheildName = eq['name']
+                    eqShEn = (eq['enchantCount'])
+                    eqSheild.append("+ {} {}".format(eqShEn,eqSheildName))
+            elif eq['category1']['name'] == '무기':
+                eqWeapon = (eq['name'])
+                eqWpEn = (eq['enchantCount'])
+                eqWeapon = "+ {} {}".format(eqWpEn,eqWeapon)
+                eqWp.append(eqWeapon)
+            elif eq['category1']['name'] == '날개':
+                eqWing.append(eq['name'])
                 
-            #벨트 확인
-            if len(eqBelt) == 1:
-                eqBeltFin = "허리띠 : {}".format(eqBelt[0])
-            else :
-                eqBeltFin = "허리띠 : 없음"
-            
-            #어깨 확인
-            if len(eqSh) == 1 :
-                eqShFin = "어깨 : {}".format(eqSh[0])
-            else :
-                eqShFin = "어깨 : 없음"
-            
-            #장갑 확인
-            if len(eqHand) == 1 :
-                eqHandFin = "장갑 : {}".format(eqHand[0])
-            else :
-                eqHandFin = "장갑 : 없음"
-                
-            #신발 확인
-            if len(eqFoot) == 1 :
-                eqFootFin = "신발 : {}".format(eqFoot[0])
-            else :
-                eqFootFin = "신발 : 없음"
-            
-            #상의 확인
-            if len(eqTorso) == 1:
-                eqTorsoFin = "상의 : {}".format(eqTorso[0])
-            else :
-                eqTorsoFin = "상의 : 없음"
-                
-            #하의 확인
-            if len(eqLeg) == 1:
-                eqLegFin = "하의 : {}".format(eqLeg[0])
-            else :
-                eqLegFin = "하의 : 없음"
-            
-            #머리 확인
-            if len(eqHead) == 1:
-                eqHeadFin = "머리 : {}".format(eqHead[0])
-            else :
-                eqHeadFin = "머리 : 없음"
-            
-            #방패 확인
-            if len(eqSheild) == 1 :
-                eqSheildFin = "방패 : {}".format(eqSheild[0])
-            else :
-                eqSheildFin = "방패 : 없음"
-
-            #무기 확인
-            if len(eqWp) == 4:
-                eqWp1 = "무기 : {}".format(eqWp[0])
-                eqWp2 = "무기 : {}".format(eqWp[1])
-                eqWp3 = "무기 : {}".format(eqWp[2])
-                eqWp4 = "무기 : {}".format(eqWp[3])
-            elif len(eqWp) == 3:
-                eqWp1 = "무기 : {}".format(eqWp[0])
-                eqWp2 = "무기 : {}".format(eqWp[1])
-                eqWp3 = "무기 : {}".format(eqWp[2])
-                eqWp4 = "무기 : 없음"
-            elif len(eqWp) == 2:
-                eqWp1 = "무기 : {}".format(eqWp[0])
-                eqWp2 = "무기 : {}".format(eqWp[1])
-                eqWp3 = "무기 : 없음"
-                eqWp4 = "무기 : 없음"
-            elif len(eqWp) == 1:
-                eqWp1 = "무기 : {}".format(eqWp[0])
-                eqWp2 = "무기 : 없음"
-                eqWp3 = "무기 : 없음"
-                eqWp4 = "무기 : 없음"
-            elif len(eqWp) == 0:
-                eqWp1 = "무기 : 없음"
-                eqWp2 = "무기 : 없음"
-                eqWp3 = "무기 : 없음"
-                eqWp4 = "무기 : 없음"
-
-            #스티 확인
-            if len(stiName) == 8:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : {}".format(stiName[2])
-                sti4 = "스티그마 : {}".format(stiName[3])
-                sti5 = "스티그마 : {}".format(stiName[4])
-                sti6 = "스티그마 : {}".format(stiName[5])
-                sti7 = "스티그마 : {}".format(stiName[6])
-                sti8 = "스티그마 : {}".format(stiName[7])
-            elif len(stiName) == 7:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : {}".format(stiName[2])
-                sti4 = "스티그마 : {}".format(stiName[3])
-                sti5 = "스티그마 : {}".format(stiName[4])
-                sti6 = "스티그마 : {}".format(stiName[5])
-                sti7 = "스티그마 : {}".format(stiName[6])
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 6:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : {}".format(stiName[2])
-                sti4 = "스티그마 : {}".format(stiName[3])
-                sti5 = "스티그마 : {}".format(stiName[4])
-                sti6 = "스티그마 : {}".format(stiName[5])
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 5:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : {}".format(stiName[2])
-                sti4 = "스티그마 : {}".format(stiName[3])
-                sti5 = "스티그마 : {}".format(stiName[4])
-                sti6 = "스티그마 : 없음"
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 4:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : {}".format(stiName[2])
-                sti4 = "스티그마 : {}".format(stiName[3])
-                sti5 = "스티그마 : 없음"
-                sti6 = "스티그마 : 없음"
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 3:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : {}".format(stiName[2])
-                sti4 = "스티그마 : 없음"
-                sti5 = "스티그마 : 없음"
-                sti6 = "스티그마 : 없음"
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 2:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : {}".format(stiName[1])
-                sti3 = "스티그마 : 없음"
-                sti4 = "스티그마 : 없음"
-                sti5 = "스티그마 : 없음"
-                sti6 = "스티그마 : 없음"
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 1:
-                sti1 = "스티그마 : {}".format(stiName[0])
-                sti2 = "스티그마 : 없음"
-                sti3 = "스티그마 : 없음"
-                sti4 = "스티그마 : 없음"
-                sti5 = "스티그마 : 없음"
-                sti6 = "스티그마 : 없음"
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-            elif len(stiName) == 0:
-                sti1 = "스티그마 : 없음"
-                sti2 = "스티그마 : 없음"
-                sti3 = "스티그마 : 없음"
-                sti4 = "스티그마 : 없음"
-                sti5 = "스티그마 : 없음"
-                sti6 = "스티그마 : 없음"
-                sti7 = "스티그마 : 없음"
-                sti8 = "스티그마 : 없음"
-
-            #변수 version 1 (21.05.03 이전)
-            accuracy = totstat['accuracyRight']
-            magicalAccuracy = totstat['magicalAccuracy']
-            attack = totstat['physicalRight']
-            hp = totstat['hp']
-            magicResist = totstat['magicResist']
-            critical = totstat['criticalRight']
-            block = totstat['block']
-            magicalBoost = totstat['magicalBoost']
-
-            #변수 version 2 (21.05.03)
-            nick = "닉네임 : {}".format(user[userCnt])
-            className = "클래스 : {}".format(className)
-            level = "레벨 : {}".format(level)
-            basic = nick + " / " + className + " / " + level
-            raceName = "종족 : {}".format(raceName)
-            guildName = "레기온 : {}".format(guildName)
-            rankName = "어비스계급 : {}".format(rankName)
-            totalKill = "전체킬수 : {}".format(totalKill)
-            hp = "생명력 : {}".format(hp)
-            magicResist = "마법저항 : {}".format(magicResist)
-            block = "방패방어 : {}".format(block)
-            attack = "공격력 : {}".format(attack)
-            accuracy = "명중 : {}".format(accuracy)
-            critical = "물리치명타 : {}".format(critical)
-            magicalBoost = "마법증폭력 : {}".format(magicalBoost)
-            magicalAccuracy = "마법적중 : {}".format(magicalAccuracy)
-            
-            #pvp 추뎀 산출
-            
-            #반지1
-            if eqRing1.find("십부장") >= 0:
-                pvpRing1 = 1.6
-            elif eqRing1.find("백부장") >= 0:
-                pvpRing1 = 1.8
-            elif eqRing1.find("천부장") >= 0:
-                pvpRing1 = 2.0
-            else :
-                pvpRing1 = 0
-            
-            #반지2
-            if eqRing2.find("십부장") >= 0:
-                pvpRing2 = 1.6
-            elif eqRing2.find("백부장") >= 0:
-                pvpRing2 = 1.8
-            elif eqRing2.find("천부장") >= 0:
-                pvpRing2 = 2.0
-            else :
-                pvpRing2 = 0
-                
-            #귀고리1
-            if eqEar1.find("십부장") >= 0:
-                pvpEar1 = 2.4
-            elif eqEar1.find("백부장") >= 0:
-                pvpEar1 = 2.7
-            elif eqEar1.find("천부장") >= 0:
-                pvpEar1 = 3.0
-            else :
-                pvpEar1 = 0
-
-            #귀고리2
-            if eqEar2.find("십부장") >= 0:
-                pvpEar2 = 2.4
-            elif eqEar2.find("백부장") >= 0:
-                pvpEar2 = 2.7
-            elif eqEar2.find("천부장") >= 0:
-                pvpEar2 = 3.0
-            else :
-                pvpEar2 = 0
-            
-            #목걸이
-            if eqNecFin.find("십부장") >= 0:
-                pvpNec = 3.2
-            elif eqNecFin.find("백부장") >= 0:
-                pvpNec = 3.6
-            elif eqNecFin.find("천부장") >= 0:
-                pvpNec = 4.0               
-            else :
-                pvpNec = 0
-            
-            #벨트
-            if eqBeltFin.find("십부장") >= 0:
-                pvpBelt = 1.6
-            elif eqBeltFin.find("백부장") >= 0:
-                pvpBelt = 1.8
-            elif eqBeltFin.find("천부장") >= 0:
-                pvpBelt = 2.0
-            else :
-                pvpBelt = 0
-            
-            #무기
-            
-            #무기1
-            if eqWp1.find("단도") >= 0:
-                if eqWp1.find("십부") >= 0:
-                    pvpWp1 = 4.8
-                elif eqWp1.find("백부") >= 0:
-                    pvpWp1 = 5.4
-                elif eqWp1.find("천부") >= 0:
-                    pvpWp1 = 6.0
-                else :
-                    pvpWp1 = 0
-            elif eqWp1.find("검") >= 0:
-                if eqWp1.find("십부") >= 0:
-                    pvpWp1 = 4.8
-                elif eqWp1.find("백부") >= 0:
-                    pvpWp1 = 5.4
-                elif eqWp1.find("천부") >= 0:
-                    pvpWp1 = 6.0
-                else :
-                    pvpWp1 = 0 
-            elif eqWp1.find("전투망치") >= 0:
-                if eqWp1.find("십부") >= 0:
-                    pvpWp1 = 4.8
-                elif eqWp1.find("백부") >= 0:
-                    pvpWp1 = 5.4
-                elif eqWp1.find("천부") >= 0:
-                    pvpWp1 = 6.0
-                else :
-                    pvpWp1 = 0 
-            else :
-                if eqWp1.find("십부") >= 0:
-                    pvpWp1 = 8.0
-                elif eqWp1.find("백부") >= 0:
-                    pvpWp1 = 9.0
-                elif eqWp1.find("천부") >= 0:
-                    pvpWp1 = 10.0
-                else :
-                    pvpWp1 = 0 
-            
-            #무기2
-            if eqWp2.find("단도") >= 0:
-                if eqWp2.find("십부") >= 0:
-                    pvpWp2 = 4.8
-                elif eqWp2.find("백부") >= 0:
-                    pvpWp2 = 5.4
-                elif eqWp2.find("천부") >= 0:
-                    pvpWp2 = 6.0
-                else :
-                    pvpWp2 = 0
-            elif eqWp2.find("검") >= 0:
-                if eqWp2.find("십부") >= 0:
-                    pvpWp2 = 4.8
-                elif eqWp2.find("백부") >= 0:
-                    pvpWp2 = 5.4
-                elif eqWp2.find("천부") >= 0:
-                    pvpWp2 = 6.0
-                else :
-                    pvpWp2 = 0 
-            elif eqWp2.find("전투망치") >= 0:
-                if eqWp2.find("십부") >= 0:
-                    pvpWp2 = 4.8
-                elif eqWp2.find("백부") >= 0:
-                    pvpWp2 = 5.4
-                elif eqWp2.find("천부") >= 0:
-                    pvpWp2 = 6.0
-                else :
-                    pvpWp2 = 0 
-            else :
-                if eqWp2.find("십부") >= 0:
-                    pvpWp2 = 8.0
-                elif eqWp2.find("백부") >= 0:
-                    pvpWp2 = 9.0
-                elif eqWp2.find("천부") >= 0:
-                    pvpWp2 = 10.0
-                else :
-                    pvpWp2 = 0
-
-            #무기3
-            if eqWp3.find("단도") >= 0:
-                if eqWp3.find("십부") >= 0:
-                    pvpWp3 = 4.8
-                elif eqWp3.find("백부") >= 0:
-                    pvpWp3 = 5.4
-                elif eqWp3.find("천부") >= 0:
-                    pvpWp3 = 6.0
-                else :
-                    pvpWp3 = 0
-            elif eqWp3.find("검") >= 0:
-                if eqWp3.find("십부") >= 0:
-                    pvpWp3 = 4.8
-                elif eqWp3.find("백부") >= 0:
-                    pvpWp3 = 5.4
-                elif eqWp3.find("천부") >= 0:
-                    pvpWp3 = 6.0
-                else :
-                    pvpWp3 = 0 
-            elif eqWp3.find("전투망치") >= 0:
-                if eqWp3.find("십부") >= 0:
-                    pvpWp3 = 4.8
-                elif eqWp3.find("백부") >= 0:
-                    pvpWp3 = 5.4
-                elif eqWp3.find("천부") >= 0:
-                    pvpWp3 = 6.0
-                else :
-                    pvpWp3 = 0 
-            else :
-                if eqWp3.find("십부") >= 0:
-                    pvpWp3 = 8.0
-                elif eqWp3.find("백부") >= 0:
-                    pvpWp3 = 9.0
-                elif eqWp3.find("천부") >= 0:
-                    pvpWp3 = 10.0
-                else :
-                    pvpWp3 = 0
-            
-            #무기4
-            if eqWp4.find("단도") >= 0:
-                if eqWp4.find("십부") >= 0:
-                    pvpWp4 = 4.8
-                elif eqWp4.find("백부") >= 0:
-                    pvpWp4 = 5.4
-                elif eqWp4.find("천부") >= 0:
-                    pvpWp4 = 6.0
-                else :
-                    pvpWp4 = 0
-            elif eqWp4.find("검") >= 0:
-                if eqWp4.find("십부") >= 0:
-                    pvpWp4 = 4.8
-                elif eqWp4.find("백부") >= 0:
-                    pvpWp4 = 5.4
-                elif eqWp4.find("천부") >= 0:
-                    pvpWp4 = 6.0
-                else :
-                    pvpWp4 = 0 
-            elif eqWp4.find("전투망치") >= 0:
-                if eqWp4.find("십부") >= 0:
-                    pvpWp4 = 4.8
-                elif eqWp4.find("백부") >= 0:
-                    pvpWp4 = 5.4
-                elif eqWp4.find("천부") >= 0:
-                    pvpWp4 = 6.0
-                else :
-                    pvpWp4 = 0 
-            else :
-                if eqWp4.find("십부") >= 0:
-                    pvpWp4 = 8.0
-                elif eqWp4.find("백부") >= 0:
-                    pvpWp4 = 9.0
-                elif eqWp4.find("천부") >= 0:
-                    pvpWp4 = 10.0
-                else :
-                    pvpWp4 = 0
-                    
-                    
-            #pvp 방어 산출
-            
-            #상의
-            if eqTorsoFin.find("십부") >= 0:
-                pvpTorso = 4
-            elif eqTorsoFin.find("백부") >= 0:
-                pvpTorso = 4.5
-            elif eqTorsoFin.find("천부") >= 0:
-                pvpTorso = 5.0    
-            else :
-                pvpTorso = 0
-
-            #하의
-            if eqLegFin.find("십부") >= 0:
-                pvpLeg = 3.2
-            elif eqLegFin.find("백부") >= 0:
-                pvpLeg = 3.6
-            elif eqLegFin.find("천부") >= 0:
-                pvpLeg = 4.0    
-            else :
-                pvpLeg = 0
-
-            #어깨
-            if eqShFin.find("십부") >= 0:
-                pvpSh = 2.4
-            elif eqShFin.find("백부") >= 0:
-                pvpSh = 2.7
-            elif eqShFin.find("천부") >= 0:
-                pvpSh = 3.0    
-            else :
-                pvpSh = 0
-                
-            #장갑
-            if eqHandFin.find("십부") >= 0:
-                pvpHand = 2.4
-            elif eqHandFin.find("백부") >= 0:
-                pvpHand = 2.7
-            elif eqHandFin.find("천부") >= 0:
-                pvpHand = 3.0    
-            else :
-                pvpHand = 0
-                
-            #신발
-            if eqFootFin.find("십부") >= 0:
-                pvpFoot = 2.4
-            elif eqFootFin.find("백부") >= 0:
-                pvpFoot = 2.7
-            elif eqFootFin.find("천부") >= 0:
-                pvpFoot = 3.0    
-            else :
-                pvpFoot = 0
-                
-            #머리
-            if eqHeadFin.find("십부") >= 0:
-                pvpHead = 1.6
-            elif eqHeadFin.find("백부") >= 0:
-                pvpHead = 1.8
-            elif eqHeadFin.find("천부") >= 0:
-                pvpHead = 2.0
-            else :
-                pvpHead = 0
-                
-            #방패
-            if eqSheildFin.find("십부") >= 0:
-                pvpSheild = 4
-            elif eqSheildFin.find("백부") >= 0:
-                pvpSheild = 4.5
-            elif eqSheildFin.find("천부") >= 0:
-                pvpSheild = 5.0    
-            else :
-                pvpSheild = 0
-            
-            #pvp방어 합계
-            pvpDef = pvpTorso + pvpLeg + pvpSh + pvpHand + pvpFoot + pvpHead + pvpSheild
-            
-            #pvp추뎀 합계
-            pvpAcc = pvpRing1 + pvpRing2 + pvpEar1 + pvpEar2 + pvpNec + pvpBelt
-            pvpAtt = pvpAcc + pvpWp1 + pvpWp2 + pvpWp3 + pvpWp4
-            #if eqWp1.find("단도") >= 0 :
-            #    pvpAtt = pvpAcc + pvpWp1 + pvpWp2
-            #elif eqWp1.find("검") >= 0 :
-            #    if eqSheildFin.find("없음") >= 0 :
-            #        pvpAtt = pvpAcc + pvpWp1 + pvpWp2
-            #    else :
-            #        pvpAtt = pvpAcc + pvpWp1
-            #elif eqWp1.find("전투망치") >= 0:
-            #    if eqSheildFin.find("없음") >= 0 :
-            #        pvpAtt = pvpAcc + pvpWp1 + pvpWp2
-            #    else :
-            #        pvpAtt = pvpAcc + pvpWp1
-            
-                
-            pvpDefFin = "PVP 방어력 : {}%".format(pvpDef)
-            pvpAttFin = "PVP 공격력 : {}%".format(pvpAtt)
-            pvpInfo = "PVP 관련수치는 정확하지 않으니 참고만 부탁드립니다."
-            
-            #출력
-            
-            searchFin = "기본정보\n\n{}\n{}\n{}\n{}\n\
-            \n\n스탯\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n\
-            \n\n스티그마\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
-            \n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
-            \n\nPVP추가수치\n\n{}\n{}\n{}\
-            \n\n공식홈페이지 링크\n{}"\
-            .format(basic,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy,\
-            sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8,\
-            eqWp1,eqWp2,eqWp3,eqWp4,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin,eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,\
-            pvpAttFin,pvpDefFin,pvpInfo,aionurl)
-
         
-            #await message.channel.send\
-            #("기본정보\n닉네임 : {} \n클래스 : {}\n종족 : {} \n레기온 : {}\n어비스계급: {}\n전체 킬수: {}\n\
-            #\n\n스탯\n\n생명력 : {} \n마법저항 : {} \n방패방어 : {}\n공격력 : {} \n명중 : {} \n물리치명타 : {}\n마법적중 : {} \
-            #\n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {} \
-            #\n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}"\
-            #.format(user[userCnt],className,raceName,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
-            #stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7],\
-            #eqWp1,eqWp2,eqWp3,eqSheild,eqTorso,eqSh,eqLeg,eqHand,eqFoot,eqHead,eqNec,eqEar1,eqEar2,eqRing1,eqRing2,eqBelt,aionurl))
-            
-            await message.channel.send(searchFin)
+        #반지 확인
+        if len(eqRing) == 2:
+            eqRing1 = "반지 : {}".format(eqRing[0])
+            eqRing2 = "반지 : {}".format(eqRing[1])
+        elif len(eqRing) == 1:
+            eqRing1 = "반지 : {}".format(eqRing[0])
+            eqRing2 = "반지 : 없음"
+        elif len(eqRing) == 0:
+            eqRing1 = "반지 : 없음"
+            eqRing2 = "반지 : 없음"
         
+        #귀고리 확인
+        if len(eqEar) == 2:
+            eqEar1 = "귀고리 : {}".format(eqEar[0])
+            eqEar2 = "귀고리 : {}".format(eqEar[1])
+        elif len(eqEar) == 1:
+            eqEar1 = "귀고리 : {}".format(eqEar[0])
+            eqEar2 = "귀고리 : 없음"
+        elif len(eqEar) == 0:
+            eqEar1 = "귀고리 : 없음"
+            eqEar2 = "귀고리 : 없음"
 
-client.run('봇 토큰')
+        #목걸이 확인
+        if len(eqNec) == 1 :
+            eqNecFin = "목걸이 : {}".format(eqNec[0])
+        else : 
+            eqNecFin = "목걸이 : 없음"
+        
+        #벨트 확인
+        if len(eqBelt) == 1:
+            eqBeltFin = "허리띠 : {}".format(eqBelt[0])
+        else :
+            eqBeltFin = "허리띠 : 없음"
+        
+        #어깨 확인
+        if len(eqSh) == 1 :
+            eqShFin = "어깨 : {}".format(eqSh[0])
+        else :
+            eqShFin = "어깨 : 없음"
+        
+        #장갑 확인
+        if len(eqHand) == 1 :
+            eqHandFin = "장갑 : {}".format(eqHand[0])
+        else :
+            eqHandFin = "장갑 : 없음"
+        
+        #신발 확인
+        if len(eqFoot) == 1 :
+            eqFootFin = "신발 : {}".format(eqFoot[0])
+        else :
+            eqFootFin = "신발 : 없음"
+        
+        #상의 확인
+        if len(eqTorso) == 1:
+            eqTorsoFin = "상의 : {}".format(eqTorso[0])
+        else :
+            eqTorsoFin = "상의 : 없음"
+        
+        #하의 확인
+        if len(eqLeg) == 1:
+            eqLegFin = "하의 : {}".format(eqLeg[0])
+        else :
+            eqLegFin = "하의 : 없음"
+        
+        #머리 확인
+        if len(eqHead) == 1:
+            eqHeadFin = "머리 : {}".format(eqHead[0])
+        else :
+            eqHeadFin = "머리 : 없음"
+        
+        #방패 확인
+        if len(eqSheild) == 1 :
+            eqSheildFin = "방패 : {}".format(eqSheild[0])
+        else :
+            eqSheildFin = "방패 : 없음"
+            
+        #날개 확인
+        if len(eqWing) == 1 :
+            eqWingFin = "날개 : {}".format(eqWing[0])
+        else :
+            eqWingFin = "날개 : 없음"
+
+        #무기 확인
+        if len(eqWp) == 4:
+            eqWp1 = "무기 : {}".format(eqWp[0])
+            eqWp2 = "무기 : {}".format(eqWp[1])
+            eqWp3 = "무기 : {}".format(eqWp[2])
+            eqWp4 = "무기 : {}".format(eqWp[3])
+            eqWpFin = "{}\n{}\n{}\n{}".format(eqWp1,eqWp2,eqWp3,eqWp4)
+        elif len(eqWp) == 3:
+            eqWp1 = "무기 : {}".format(eqWp[0])
+            eqWp2 = "무기 : {}".format(eqWp[1])
+            eqWp3 = "무기 : {}".format(eqWp[2])
+            eqWp4 = "무기 : 없음"
+            eqWpFin = "{}\n{}\n{}".format(eqWp1,eqWp2,eqWp3)
+        elif len(eqWp) == 2:
+            eqWp1 = "무기 : {}".format(eqWp[0])
+            eqWp2 = "무기 : {}".format(eqWp[1])
+            eqWp3 = "무기 : 없음"
+            eqWp4 = "무기 : 없음"
+            eqWpFin = "{}\n{}".format(eqWp1,eqWp2)
+        elif len(eqWp) == 1:
+            eqWp1 = "무기 : {}".format(eqWp[0])
+            eqWp2 = "무기 : 없음"
+            eqWp3 = "무기 : 없음"
+            eqWp4 = "무기 : 없음"
+            eqWpFin = "{}".format(eqWp1)
+        elif len(eqWp) == 0:
+            eqWp1 = "무기 : 없음"
+            eqWp2 = "무기 : 없음"
+            eqWp3 = "무기 : 없음"
+            eqWp4 = "무기 : 없음"
+            eqWpFin = "무기 : 없음"
+
+        #스티 확인
+        if len(stiName) == 8:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "{}".format(stiName[2])
+            sti4 = "{}".format(stiName[3])
+            sti5 = "{}".format(stiName[4])
+            sti6 = "{}".format(stiName[5])
+            sti7 = "{}".format(stiName[6])
+            sti8 = "{}".format(stiName[7])
+        elif len(stiName) == 7:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "{}".format(stiName[2])
+            sti4 = "{}".format(stiName[3])
+            sti5 = "{}".format(stiName[4])
+            sti6 = "{}".format(stiName[5])
+            sti7 = "{}".format(stiName[6])
+            sti8 = "없음"
+        elif len(stiName) == 6:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "{}".format(stiName[2])
+            sti4 = "{}".format(stiName[3])
+            sti5 = "{}".format(stiName[4])
+            sti6 = "{}".format(stiName[5])
+            sti7 = "없음"
+            sti8 = "없음"
+        elif len(stiName) == 5:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "{}".format(stiName[2])
+            sti4 = "{}".format(stiName[3])
+            sti5 = "{}".format(stiName[4])
+            sti6 = "없음"
+            sti7 = "없음"
+            sti8 = "없음"
+        elif len(stiName) == 4:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "{}".format(stiName[2])
+            sti4 = "{}".format(stiName[3])
+            sti5 = "없음"
+            sti6 = "없음"
+            sti7 = "없음"
+            sti8 = "없음"
+        elif len(stiName) == 3:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "{}".format(stiName[2])
+            sti4 = "없음"
+            sti5 = "없음"
+            sti6 = "없음"
+            sti7 = "없음"
+            sti8 = "없음"
+        elif len(stiName) == 2:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "{}".format(stiName[1])
+            sti3 = "없음"
+            sti4 = "없음"
+            sti5 = "없음"
+            sti6 = "없음"
+            sti7 = "없음"
+            sti8 = "없음"
+        elif len(stiName) == 1:
+            sti1 = "{}".format(stiName[0])
+            sti2 = "없음"
+            sti3 = "없음"
+            sti4 = "없음"
+            sti5 = "없음"
+            sti6 = "없음"
+            sti7 = "없음"
+            sti8 = "없음"
+        elif len(stiName) == 0:
+            sti1 = "없음"
+            sti2 = "없음"
+            sti3 = "없음"
+            sti4 = "없음"
+            sti5 = "없음"
+            sti6 = "없음"
+            sti7 = "없음"
+            sti8 = "없음"
+
+        #변수 version 1 (21.05.03 이전)
+        accuracy = totstat['accuracyRight']
+        magicalAccuracy = totstat['magicalAccuracy']
+        attack = totstat['physicalRight']
+        hp = totstat['hp']
+        magicResist = totstat['magicResist']
+        critical = totstat['criticalRight']
+        block = totstat['block']
+        magicalBoost = totstat['magicalBoost']
+
+        #변수 version 2 (21.05.03)
+        nick = "{}".format(user[userCnt])
+        className = "{}".format(className)
+        level = "Lv{}".format(level)
+        basic = nick + " / " + className + " / " + level
+        raceName = "종족 : {}".format(raceName)
+        guildName = "레기온 : {}".format(guildName)
+        rankName = "어비스계급 : {}".format(rankName)
+        totalKill = "전체킬수 : {}".format(totalKill)
+        nowAp = "현재어포 : {}".format(datasrc['character_abyss']['abyssPoint'])
+        todayKill = "금일킬수 : {}".format(datasrc['character_abyss']['todayKillCount'])
+        todayAp = "금일어포 : {}".format(datasrc['character_abyss']['todayAbyssPoint'])
+        twKill = "금주킬수 : {}".format(datasrc['character_abyss']['thisWeekKillCount'])
+        twAp = "금주어포 : {}".format(datasrc['character_abyss']['thisWeekAbyssPoint'])
+        lwKill = "전주킬수 : {}".format(datasrc['character_abyss']['lastWeekKillCount'])
+        lwAp = "전주어포 : {}".format(datasrc['character_abyss']['lastWeekAbyssPoint'])
+        hp = "생명력 : {}".format(hp)
+        magicResist = "마법저항 : {}".format(magicResist)
+        block = "방패방어 : {}".format(block)
+        attack = "공격력 : {}".format(attack)
+        accuracy = "명중 : {}".format(accuracy)
+        critical = "물리치명타 : {}".format(critical)
+        magicalBoost = "마법증폭력 : {}".format(magicalBoost)
+        magicalAccuracy = "마법적중 : {}".format(magicalAccuracy)
+        
+        #pvp 추뎀 산출
+        
+        #반지1
+        if eqRing1.find("십부장") >= 0:
+            pvpRing1 = 1.6
+        elif eqRing1.find("백부장") >= 0:
+            pvpRing1 = 1.8
+        elif eqRing1.find("천부장") >= 0:
+            pvpRing1 = 2.0
+        else :
+            pvpRing1 = 0
+        
+        #반지2
+        if eqRing2.find("십부장") >= 0:
+            pvpRing2 = 1.6
+        elif eqRing2.find("백부장") >= 0:
+            pvpRing2 = 1.8
+        elif eqRing2.find("천부장") >= 0:
+            pvpRing2 = 2.0
+        else :
+            pvpRing2 = 0
+        
+        #귀고리1
+        if eqEar1.find("십부장") >= 0:
+            pvpEar1 = 2.4
+        elif eqEar1.find("백부장") >= 0:
+            pvpEar1 = 2.7
+        elif eqEar1.find("천부장") >= 0:
+            pvpEar1 = 3.0
+        else :
+            pvpEar1 = 0
+
+        #귀고리2
+        if eqEar2.find("십부장") >= 0:
+            pvpEar2 = 2.4
+        elif eqEar2.find("백부장") >= 0:
+            pvpEar2 = 2.7
+        elif eqEar2.find("천부장") >= 0:
+            pvpEar2 = 3.0
+        else :
+            pvpEar2 = 0
+        
+        #목걸이
+        if eqNecFin.find("십부장") >= 0:
+            pvpNec = 3.2
+        elif eqNecFin.find("백부장") >= 0:
+            pvpNec = 3.6
+        elif eqNecFin.find("천부장") >= 0:
+            pvpNec = 4.0           
+        else :
+            pvpNec = 0
+        
+        #벨트
+        if eqBeltFin.find("십부장") >= 0:
+            pvpBelt = 1.6
+        elif eqBeltFin.find("백부장") >= 0:
+            pvpBelt = 1.8
+        elif eqBeltFin.find("천부장") >= 0:
+            pvpBelt = 2.0
+        else :
+            pvpBelt = 0
+        
+        #무기
+        
+        #무기1
+        if eqWp1.find("단도") >= 0:
+            if eqWp1.find("십부") >= 0:
+                pvpWp1 = 4.8
+            elif eqWp1.find("백부") >= 0:
+                pvpWp1 = 5.4
+            elif eqWp1.find("천부") >= 0:
+                pvpWp1 = 6.0
+            else :
+                pvpWp1 = 0
+        elif eqWp1.find("검") >= 0:
+            if eqWp1.find("십부") >= 0:
+                pvpWp1 = 4.8
+            elif eqWp1.find("백부") >= 0:
+                pvpWp1 = 5.4
+            elif eqWp1.find("천부") >= 0:
+                pvpWp1 = 6.0
+            else :
+                pvpWp1 = 0 
+        elif eqWp1.find("전투망치") >= 0:
+            if eqWp1.find("십부") >= 0:
+                pvpWp1 = 4.8
+            elif eqWp1.find("백부") >= 0:
+                pvpWp1 = 5.4
+            elif eqWp1.find("천부") >= 0:
+                pvpWp1 = 6.0
+            else :
+                pvpWp1 = 0 
+        else :
+            if eqWp1.find("십부") >= 0:
+                pvpWp1 = 8.0
+            elif eqWp1.find("백부") >= 0:
+                pvpWp1 = 9.0
+            elif eqWp1.find("천부") >= 0:
+                pvpWp1 = 10.0
+            else :
+                pvpWp1 = 0 
+        
+        #무기2
+        if eqWp2.find("단도") >= 0:
+            if eqWp2.find("십부") >= 0:
+                pvpWp2 = 4.8
+            elif eqWp2.find("백부") >= 0:
+                pvpWp2 = 5.4
+            elif eqWp2.find("천부") >= 0:
+                pvpWp2 = 6.0
+            else :
+                pvpWp2 = 0
+        elif eqWp2.find("검") >= 0:
+            if eqWp2.find("십부") >= 0:
+                pvpWp2 = 4.8
+            elif eqWp2.find("백부") >= 0:
+                pvpWp2 = 5.4
+            elif eqWp2.find("천부") >= 0:
+                pvpWp2 = 6.0
+            else :
+                pvpWp2 = 0 
+        elif eqWp2.find("전투망치") >= 0:
+            if eqWp2.find("십부") >= 0:
+                pvpWp2 = 4.8
+            elif eqWp2.find("백부") >= 0:
+                pvpWp2 = 5.4
+            elif eqWp2.find("천부") >= 0:
+                pvpWp2 = 6.0
+            else :
+                pvpWp2 = 0 
+        else :
+            if eqWp2.find("십부") >= 0:
+                pvpWp2 = 8.0
+            elif eqWp2.find("백부") >= 0:
+                pvpWp2 = 9.0
+            elif eqWp2.find("천부") >= 0:
+                pvpWp2 = 10.0
+            else :
+                pvpWp2 = 0
+
+        #무기3
+        if eqWp3.find("단도") >= 0:
+            if eqWp3.find("십부") >= 0:
+                pvpWp3 = 4.8
+            elif eqWp3.find("백부") >= 0:
+                pvpWp3 = 5.4
+            elif eqWp3.find("천부") >= 0:
+                pvpWp3 = 6.0
+            else :
+                pvpWp3 = 0
+        elif eqWp3.find("검") >= 0:
+            if eqWp3.find("십부") >= 0:
+                pvpWp3 = 4.8
+            elif eqWp3.find("백부") >= 0:
+                pvpWp3 = 5.4
+            elif eqWp3.find("천부") >= 0:
+                pvpWp3 = 6.0
+            else :
+                pvpWp3 = 0 
+        elif eqWp3.find("전투망치") >= 0:
+            if eqWp3.find("십부") >= 0:
+                pvpWp3 = 4.8
+            elif eqWp3.find("백부") >= 0:
+                pvpWp3 = 5.4
+            elif eqWp3.find("천부") >= 0:
+                pvpWp3 = 6.0
+            else :
+                pvpWp3 = 0 
+        else :
+            if eqWp3.find("십부") >= 0:
+                pvpWp3 = 8.0
+            elif eqWp3.find("백부") >= 0:
+                pvpWp3 = 9.0
+            elif eqWp3.find("천부") >= 0:
+                pvpWp3 = 10.0
+            else :
+                pvpWp3 = 0
+        
+        #무기4
+        if eqWp4.find("단도") >= 0:
+            if eqWp4.find("십부") >= 0:
+                pvpWp4 = 4.8
+            elif eqWp4.find("백부") >= 0:
+                pvpWp4 = 5.4
+            elif eqWp4.find("천부") >= 0:
+                pvpWp4 = 6.0
+            else :
+                pvpWp4 = 0
+        elif eqWp4.find("검") >= 0:
+            if eqWp4.find("십부") >= 0:
+                pvpWp4 = 4.8
+            elif eqWp4.find("백부") >= 0:
+                pvpWp4 = 5.4
+            elif eqWp4.find("천부") >= 0:
+                pvpWp4 = 6.0
+            else :
+                pvpWp4 = 0 
+        elif eqWp4.find("전투망치") >= 0:
+            if eqWp4.find("십부") >= 0:
+                pvpWp4 = 4.8
+            elif eqWp4.find("백부") >= 0:
+                pvpWp4 = 5.4
+            elif eqWp4.find("천부") >= 0:
+                pvpWp4 = 6.0
+            else :
+                pvpWp4 = 0 
+        else :
+            if eqWp4.find("십부") >= 0:
+                pvpWp4 = 8.0
+            elif eqWp4.find("백부") >= 0:
+                pvpWp4 = 9.0
+            elif eqWp4.find("천부") >= 0:
+                pvpWp4 = 10.0
+            else :
+                pvpWp4 = 0
+            
+            
+        #pvp 방어 산출
+        
+        #상의
+        if eqTorsoFin.find("십부") >= 0:
+            pvpTorso = 4
+        elif eqTorsoFin.find("백부") >= 0:
+            pvpTorso = 4.5
+        elif eqTorsoFin.find("천부") >= 0:
+            pvpTorso = 5.0    
+        else :
+            pvpTorso = 0
+
+        #하의
+        if eqLegFin.find("십부") >= 0:
+            pvpLeg = 3.2
+        elif eqLegFin.find("백부") >= 0:
+            pvpLeg = 3.6
+        elif eqLegFin.find("천부") >= 0:
+            pvpLeg = 4.0    
+        else :
+            pvpLeg = 0
+
+        #어깨
+        if eqShFin.find("십부") >= 0:
+            pvpSh = 2.4
+        elif eqShFin.find("백부") >= 0:
+            pvpSh = 2.7
+        elif eqShFin.find("천부") >= 0:
+            pvpSh = 3.0    
+        else :
+            pvpSh = 0
+        
+        #장갑
+        if eqHandFin.find("십부") >= 0:
+            pvpHand = 2.4
+        elif eqHandFin.find("백부") >= 0:
+            pvpHand = 2.7
+        elif eqHandFin.find("천부") >= 0:
+            pvpHand = 3.0    
+        else :
+            pvpHand = 0
+        
+        #신발
+        if eqFootFin.find("십부") >= 0:
+            pvpFoot = 2.4
+        elif eqFootFin.find("백부") >= 0:
+            pvpFoot = 2.7
+        elif eqFootFin.find("천부") >= 0:
+            pvpFoot = 3.0    
+        else :
+            pvpFoot = 0
+        
+        #머리
+        if eqHeadFin.find("십부") >= 0:
+            pvpHead = 1.6
+        elif eqHeadFin.find("백부") >= 0:
+            pvpHead = 1.8
+        elif eqHeadFin.find("천부") >= 0:
+            pvpHead = 2.0
+        else :
+            pvpHead = 0
+        
+        #방패
+        if eqSheildFin.find("십부") >= 0:
+            pvpSheild = 4
+        elif eqSheildFin.find("백부") >= 0:
+            pvpSheild = 4.5
+        elif eqSheildFin.find("천부") >= 0:
+            pvpSheild = 5.0    
+        else :
+            pvpSheild = 0
+        
+        #pvp방어 합계
+        pvpDef = pvpTorso + pvpLeg + pvpSh + pvpHand + pvpFoot + pvpHead + pvpSheild
+        
+        #pvp추뎀 합계
+        pvpAcc = pvpRing1 + pvpRing2 + pvpEar1 + pvpEar2 + pvpNec + pvpBelt
+        pvpAtt = pvpAcc + pvpWp1 + pvpWp2 + pvpWp3 + pvpWp4
+        #if eqWp1.find("단도") >= 0 :
+        #    pvpAtt = pvpAcc + pvpWp1 + pvpWp2
+        #elif eqWp1.find("검") >= 0 :
+        #    if eqSheildFin.find("없음") >= 0 :
+        #    pvpAtt = pvpAcc + pvpWp1 + pvpWp2
+        #    else :
+        #    pvpAtt = pvpAcc + pvpWp1
+        #elif eqWp1.find("전투망치") >= 0:
+        #    if eqSheildFin.find("없음") >= 0 :
+        #    pvpAtt = pvpAcc + pvpWp1 + pvpWp2
+        #    else :
+        #    pvpAtt = pvpAcc + pvpWp1
+        
+        
+        pvpDefFin = "PVP 방어력 : {}%".format(pvpDef)
+        pvpAttFin = "PVP 공격력 : {}%".format(pvpAtt)
+        pvpInfo = "PVP 관련수치는 정확하지 않으니 참고만 부탁드립니다."
+        
+        #출력
+        
+        searchFin = "기본정보\n\n{}\n{}\n{}\n{}\n\
+        \n\n스탯\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n\
+        \n\n스티그마\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
+        \n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\
+        \n\nPVP추가수치\n\n{}\n{}\n{}\
+        \n\n공식홈페이지 링크\n{}"\
+        .format(basic,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy,\
+        sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8,\
+        eqWp1,eqWp2,eqWp3,eqWp4,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin,eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,\
+        pvpAttFin,pvpDefFin,pvpInfo,aionurl)
+
+
+        #await message.channel.send\
+        #("기본정보\n닉네임 : {} \n클래스 : {}\n종족 : {} \n레기온 : {}\n어비스계급: {}\n전체 킬수: {}\n\
+        #\n\n스탯\n\n생명력 : {} \n마법저항 : {} \n방패방어 : {}\n공격력 : {} \n명중 : {} \n물리치명타 : {}\n마법적중 : {} \
+        #\n\n스티그마\n\n스티그마1 : {}\n스티그마2 : {}\n스티그마3 : {}\n스티그마4 : {}\n스티그마5 : {}\n스티그마6 : {}\n스티그마7 : {}\n스티그마8 : {} \
+        #\n\n장비\n\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}"\
+        #.format(user[userCnt],className,raceName,guildName,rankName,totalKill,hp,magicResist,block,attack,accuracy,critical,magicalAccuracy,\
+        #stiName[0],stiName[1],stiName[2],stiName[3],stiName[4],stiName[5],stiName[6],stiName[7],\
+        #eqWp1,eqWp2,eqWp3,eqSheild,eqTorso,eqSh,eqLeg,eqHand,eqFoot,eqHead,eqNec,eqEar1,eqEar2,eqRing1,eqRing2,eqBelt,aionurl))
+        
+        #await ctx.send(searchFin)
+        
+        ChrInfo = discord.Embed(title = "{} / {} / {} / {}".format(serverName,nick,className,level), description="{} | {}".format(rankName,guildName),url=aionurl)
+        ChrInfo.set_thumbnail(url="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey={}&charKey={}".format(SID,uid))
+        #ChrInfo.add_field(name="기본정보", value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\nPVP 관련수치는 정확하지 않으니\n참고만 부탁드립니다.".format(nick,className,level,guildName,rankName,totalKill,pvpDefFin,pvpAttFin),inline = False)
+        ChrInfo.add_field(name="주요능력치",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy),inline = True)
+        ChrInfo.add_field(name="스티그마",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8),inline=True)
+        ChrInfo.add_field(name="어비스정보",value="{}\n{}\n{}\n{}\n{}\n{}\n{}".format(rankName,totalKill,nowAp,twKill,twAp,pvpAttFin,pvpDefFin),inline=True)
+        #현재계급,전체킬,현재어포,오늘킬,오늘어포,이번주킬,이번주어포,지난주킬,지난주어포,pvp공,pvp방
+        ChrInfo.add_field(name="장비",value="{}\n{}\n{}\n{}\n{}\n{}\n{}".format(eqWpFin,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin),inline = False)
+        ChrInfo.add_field(name="악세사리",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,eqWingFin),inline = False)
+        await ctx.send(embed=ChrInfo)
+
+client.run("토큰")
