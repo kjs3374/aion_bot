@@ -3,14 +3,17 @@ from discord.ext import commands
 import requests
 import json
 
-SID = 0
+
 client = discord.Client()
 client = commands.Bot(command_prefix='!!') #접두사
 
 @client.event
 async def on_ready():
+    global SID
     print(client.user.id)
     print("ready")
+    SID = {}
+    await client.change_presence(status=discord.Status.online, activity=discord.Game("검색 명령이 수정되었습니다.\n!!도움말 또는 !!명령어로 확인하세요."))
 
 @client.command()
 async def 도움말(ctx):
@@ -18,6 +21,7 @@ async def 도움말(ctx):
     helpEmbed.add_field(name="!!서버리스트",value="아이온클래식 전체 서버리스트 출력",inline=False)
     helpEmbed.add_field(name="!!서버",value="!!서버 [서버이름]\n검색할 서버설정\n설정전까지 동일 서버로 검색",inline=False)
     helpEmbed.add_field(name="!!현재서버",value="현재 설정되어있는 서버 출력",inline=False)
+    helpEmbed.add_field(name="!!어비스템",value="어비스템 관련 어포/훈장 정보출력",inline=False)
     helpEmbed.add_field(name="!!검색",value="!!검색 [검색아이디1] [검색아이디2] ... [검색아이디...]\n띄어쓰기로 캐릭터명 구분\n입력한 캐릭터 명 만큼 검색",inline=False)
     await ctx.send(embed=helpEmbed)
     
@@ -27,17 +31,29 @@ async def 명령어(ctx):
     helpEmbed.add_field(name="!!서버리스트",value="아이온클래식 전체 서버리스트 출력",inline=False)
     helpEmbed.add_field(name="!!서버",value="!!서버 [서버이름]\n검색할 서버설정\n설정전까지 동일 서버로 검색",inline=False)
     helpEmbed.add_field(name="!!현재서버",value="현재 설정되어있는 서버 출력",inline=False)
+    helpEmbed.add_field(name="!!어비스템",value="어비스템 관련 어포/훈장 정보출력",inline=False)
     helpEmbed.add_field(name="!!검색",value="!!검색 [검색아이디1] [검색아이디2] ... [검색아이디...]\n띄어쓰기로 캐릭터명 구분\n입력한 캐릭터 명 만큼 검색",inline=False)
     await ctx.send(embed=helpEmbed)
     
 @client.command()
 async def 현재서버 (ctx):
-    global serverName
+
     global SID
-    if SID == 0 :
+    disServer = str(ctx.message.guild.id)
+    
+
+    try:
+        serverName = SID[disServer][1]
+        serverName != ""
+    except:
         infotxt = "현재 적용중인 서버가 없습니다.\n서버를 설정해 주세요"
     else :
         infotxt = "현재 적용중인 서버는 {}서버 입니다.".format(serverName)
+        
+    #if serverName != "":
+    #    infotxt = "현재 적용중인 서버는 {}서버 입니다.".format(serverName)
+    #else :
+    #    infotxt = "현재 적용중인 서버가 없습니다.\n서버를 설정해 주세요"
     SvInfo = discord.Embed(title="검색봇 현재연결서버", description="{}".format(infotxt))
     await ctx.send(embed=SvInfo)
 
@@ -48,52 +64,81 @@ async def 서버리스트 (ctx):
 
 @client.command()
 async def 서버(ctx,*,server):
-
+    
     global SID
-    global serverName
+
     serverName = server
-    SID = 0
+
+    disServer = str(ctx.message.guild.id)        #디스코드 서버 고유 ID
+    disServSet = {}                         #디스코드 서버별 SID
+    
     serverList = "이스라펠,네자칸,지켈,바이젤,트리니엘,카이시넬,루미엘"
     if serverList.find(server) >= 0:
         await ctx.send("서버를 {}로 설정합니다.".format(server))
         #serverId 설정
         if serverName == "이스라펠" :
-            SID = 21
-        if serverName == "네자칸" :
-            SID = 22
-        if serverName == "지켈" :
-            SID = 23
-        if serverName == "바이젤" :
-            SID = 24
-        if serverName == "트리니엘" :
-            SID = 25
-        if serverName == "카이시넬" :
-            SID = 26
-        if serverName == "루미엘" :
-            SID = 27
+            disServSet[disServer]=[21]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        elif serverName == "네자칸" :
+            disServSet[disServer]=[22]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        elif serverName == "지켈" :
+            disServSet[disServer]=[23]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        elif serverName == "바이젤" :
+            disServSet[disServer]=[24]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        elif serverName == "트리니엘" :
+            disServSet[disServer]=[25]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        elif serverName == "카이시넬" :
+            disServSet[disServer]=[26]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        elif serverName == "루미엘" :
+            disServSet[disServer]=[27]
+            disServSet[disServer].append(serverName)
+            SID.update(disServSet)
+        else :
+            disServSet[disServer]=[0]
+            SID.update(disServSet)
     
     else :
         await ctx.send("서버를 설정할 수 없습니다.")
-    print("서버이름 : {}\n서버아이디 : {}".format(server,SID))
+    #print("서버이름 : {}\n서버아이디 : {}".format(server,SID))
+    #print(SID)
+    #print(SID[disServer])
       
 @client.command()
 async def 검색(ctx,*,searchUsers):
 
     global SID
-    global serverName
+    
+    
+    disServer = str(ctx.message.guild.id)
+    
     allUser = []
     user = []
     allUser = searchUsers.split()
-    print(allUser)
     for user1 in allUser:
         user.append(user1)
         
     for userCnt in range(0,len(user)):
     
-        if SID == 0:
+        #if SID[disServer][0] == 0:
+        #    await ctx.send("서버설정을 먼저 해주시기 바랍니다.")
+        try :
+            SID[disServer][0] != 0
+        except :
             await ctx.send("서버설정을 먼저 해주시기 바랍니다.")
         else:
-            url = 'https://api-aion.plaync.com/search/v1/characters?classId=&pageNo=1&pageSize=20&query={}&raceId=&serverId={}&site=aion&sort=rank&world=classic'.format(user[userCnt],SID)
+            serverName = SID[disServer][1]
+            url = 'https://api-aion.plaync.com/search/v1/characters?classId=&pageNo=1&pageSize=20&query={}&raceId=&serverId={}&site=aion&sort=rank&world=classic'.format(user[userCnt],SID[disServer][0])
             
         req = requests.get(url).content
 
@@ -103,9 +148,9 @@ async def 검색(ctx,*,searchUsers):
         uid = data.get("documents")[0].get("charId")
     
         #아이온 api 주소 + 캐릭터 ID
-        srcurl = 'https://api-aion.plaync.com/game/v2/classic/merge/server/{}/id/{}'.format(SID,uid)
-        basicinfo = 'https://api-aion.plaync.com/game/v2/classic/characters/server/{}/id/{}'.format(SID,uid)
-        aionurl = 'https://aion.plaync.com/characters/server/{}/id/{}/home'.format(SID,uid)    
+        srcurl = 'https://api-aion.plaync.com/game/v2/classic/merge/server/{}/id/{}'.format(SID[disServer][0],uid)
+        basicinfo = 'https://api-aion.plaync.com/game/v2/classic/characters/server/{}/id/{}'.format(SID[disServer][0],uid)
+        aionurl = 'https://aion.plaync.com/characters/server/{}/id/{}/home'.format(SID[disServer][0],uid)    
         #keyList
         payload = {'keyList' : ["character_stats","character_equipments","character_abyss","character_stigma"]}
     
@@ -738,7 +783,8 @@ async def 검색(ctx,*,searchUsers):
         #    else :
         #    pvpAtt = pvpAcc + pvpWp1
         
-        
+        pvpDef = round(pvpDef,2)
+        pvpAtt = round(pvpAtt,2)
         pvpDefFin = "PVP 방어력 : {}%".format(pvpDef)
         pvpAttFin = "PVP 공격력 : {}%".format(pvpAtt)
         pvpInfo = "PVP 관련수치는 정확하지 않으니 참고만 부탁드립니다."
@@ -769,7 +815,7 @@ async def 검색(ctx,*,searchUsers):
         #await ctx.send(searchFin)
         
         ChrInfo = discord.Embed(title = "{} / {} / {} / {}".format(serverName,nick,className,level), description="{} | {}".format(rankName,guildName),url=aionurl)
-        ChrInfo.set_thumbnail(url="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey={}&charKey={}".format(SID,uid))
+        ChrInfo.set_thumbnail(url="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey={}&charKey={}".format(SID[disServer][0],uid))
         #ChrInfo.add_field(name="기본정보", value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\nPVP 관련수치는 정확하지 않으니\n참고만 부탁드립니다.".format(nick,className,level,guildName,rankName,totalKill,pvpDefFin,pvpAttFin),inline = False)
         ChrInfo.add_field(name="주요능력치",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy),inline = True)
         ChrInfo.add_field(name="스티그마",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(sti1,sti2,sti3,sti4,sti5,sti6,sti7,sti8),inline=True)
@@ -779,4 +825,21 @@ async def 검색(ctx,*,searchUsers):
         ChrInfo.add_field(name="악세사리",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,eqWingFin),inline = False)
         await ctx.send(embed=ChrInfo)
 
-client.run("토큰")
+@client.command()
+async def 어비스템(ctx) :
+    abyssEmbed = discord.Embed(title = "어비스아이템 정보",description = "필요 어비스포인트 (훈장 수)")
+    abyssEmbed.add_field (name="십부장 장비",value="상의 : 117,300 (0)\n하의 : 88,000 (0)\n 어장신 : 58,700 (0)\n무기 : 175,900 (0)\n방패 : 117,300 (0)",inline = True)
+    abyssEmbed.add_field (name="정예십부장 장비",value="상의 : 140,700 (9)\n하의 : 105,550 (7)\n 어장신 : 70,400 (5)\n무기 : 211,000 (14)\n방패 : 140,700 (9)",inline = True)
+    abyssEmbed.add_field (name="십부장 악세",value="목걸이,머리 : 88,000 (0)\n귀걸이 : 66,000 (0)\n 반지,허리 : 44,000 (0)",inline = True)
+    
+    abyssEmbed.add_field (name="백부장 장비",value="상의 : 212,700 (36)\n하의 : 159,500 (27)\n 어장신 : 106,400 (18)\n무기 : 319,000 (53)\n방패 : 212,700 (36)",inline = True)
+    abyssEmbed.add_field (name="정예백부장 장비",value="상의 : 319,000 (53)\n하의 : 239,200 (40)\n 어장신 : 159,500 (27)\n무기 : 478,400 (79)\n방패 : 319,000 (53)",inline = True)
+    abyssEmbed.add_field (name="백부장 악세",value="목걸이,머리 : 159,500 (27)\n귀걸이 : 119,600 (20)\n 반지,허리 : 79,800 (14)",inline = True)
+    
+    abyssEmbed.add_field (name="천부장 장비",value="상의 : 409,900 (42)\n하의 : 307,400 (31)\n 어장신 : 205,000 (21)\n무기 : 614,800 (62)\n방패 : 409,900 (42)",inline = True)
+    abyssEmbed.add_field (name="정예천부장 장비",value="상의 : 614,800 (62)\n하의 : 461,100 (47)\n 어장신 : 307,400 (31)\n무기 : 922,200 (93)\n방패 : 614,800 (62)",inline = True)
+    abyssEmbed.add_field (name="천부장 악세",value="목걸이,머리 : 307,400 (31)\n귀걸이 : 230,600 (24)\n 반지,허리 : 153,700 (16)",inline = True)
+    
+    await ctx.send(embed=abyssEmbed)
+
+client.run('봇토큰')
