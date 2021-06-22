@@ -2,7 +2,8 @@ import discord
 from discord.ext import commands
 import requests
 import json
-
+import openpyxl
+import asyncio
 
 client = discord.Client()
 client = commands.Bot(command_prefix='!!') #접두사
@@ -480,62 +481,86 @@ async def 검색(ctx,*,searchUsers):
         #반지1
         if eqRing1.find("십부장") >= 0:
             pvpRing1 = 1.6
+            pvpRing1Chk = 10
         elif eqRing1.find("백부장") >= 0:
             pvpRing1 = 1.8
+            pvpRing1Chk = 100
         elif eqRing1.find("천부장") >= 0:
             pvpRing1 = 2.0
+            pvpRing1Chk = 1000
         else :
             pvpRing1 = 0
+            pvpRing1Chk = 0
         
         #반지2
         if eqRing2.find("십부장") >= 0:
             pvpRing2 = 1.6
+            pvpRing2Chk = 10
         elif eqRing2.find("백부장") >= 0:
             pvpRing2 = 1.8
+            pvpRing2Chk = 100
         elif eqRing2.find("천부장") >= 0:
             pvpRing2 = 2.0
+            pvpRing2Chk = 1000
         else :
             pvpRing2 = 0
+            pvpRing2Chk = 0
         
         #귀고리1
         if eqEar1.find("십부장") >= 0:
             pvpEar1 = 2.4
+            pvpEar1Chk = 10
         elif eqEar1.find("백부장") >= 0:
             pvpEar1 = 2.7
+            pvpEar1Chk = 100
         elif eqEar1.find("천부장") >= 0:
             pvpEar1 = 3.0
+            pvpEar1Chk = 1000
         else :
             pvpEar1 = 0
+            pvpEar1Chk = 0
 
         #귀고리2
         if eqEar2.find("십부장") >= 0:
             pvpEar2 = 2.4
+            pvpEar2Chk = 10
         elif eqEar2.find("백부장") >= 0:
             pvpEar2 = 2.7
+            pvpEar2Chk = 100
         elif eqEar2.find("천부장") >= 0:
             pvpEar2 = 3.0
+            pvpEar2Chk = 1000
         else :
             pvpEar2 = 0
+            pvpEar2Chk = 0
         
         #목걸이
         if eqNecFin.find("십부장") >= 0:
             pvpNec = 3.2
+            pvpNecChk = 10
         elif eqNecFin.find("백부장") >= 0:
             pvpNec = 3.6
+            pvpNecChk = 100
         elif eqNecFin.find("천부장") >= 0:
-            pvpNec = 4.0           
+            pvpNec = 4.0
+            pvpNecChk = 1000
         else :
             pvpNec = 0
+            pvpNecChk = 0
         
         #벨트
         if eqBeltFin.find("십부장") >= 0:
             pvpBelt = 1.6
+            pvpBeltChk = 10
         elif eqBeltFin.find("백부장") >= 0:
             pvpBelt = 1.8
+            pvpBeltChk = 100
         elif eqBeltFin.find("천부장") >= 0:
             pvpBelt = 2.0
+            pvpBeltChk = 1000
         else :
             pvpBelt = 0
+            pvpBeltChk = 1
         
         #무기
         
@@ -697,62 +722,85 @@ async def 검색(ctx,*,searchUsers):
         #상의
         if eqTorsoFin.find("십부") >= 0:
             pvpTorso = 4
+            pvpTorsoChk = 10
         elif eqTorsoFin.find("백부") >= 0:
             pvpTorso = 4.5
+            pvpTorsoChk = 100
         elif eqTorsoFin.find("천부") >= 0:
-            pvpTorso = 5.0    
+            pvpTorso = 5.0
+            pvpTorsoChk = 1000
         else :
             pvpTorso = 0
-
+            pvpTorsoChk = 0
         #하의
         if eqLegFin.find("십부") >= 0:
             pvpLeg = 3.2
+            pvpLegChk = 10
         elif eqLegFin.find("백부") >= 0:
             pvpLeg = 3.6
+            pvpLegChk = 100
         elif eqLegFin.find("천부") >= 0:
-            pvpLeg = 4.0    
+            pvpLeg = 4.0   
+            pvpLegChk = 1000
         else :
             pvpLeg = 0
+            pvpLegChk = 0
 
         #어깨
         if eqShFin.find("십부") >= 0:
             pvpSh = 2.4
+            pvpShChk = 10
         elif eqShFin.find("백부") >= 0:
             pvpSh = 2.7
+            pvpShChk = 100
         elif eqShFin.find("천부") >= 0:
-            pvpSh = 3.0    
+            pvpSh = 3.0
+            pvpShChk = 1000
         else :
             pvpSh = 0
+            pvpShChk = 0
         
         #장갑
         if eqHandFin.find("십부") >= 0:
             pvpHand = 2.4
+            pvpHandChk = 10
         elif eqHandFin.find("백부") >= 0:
             pvpHand = 2.7
+            pvpHandChk = 100
         elif eqHandFin.find("천부") >= 0:
-            pvpHand = 3.0    
+            pvpHand = 3.0
+            pvpHandChk = 1000
         else :
             pvpHand = 0
+            pvpHandChk = 0
         
         #신발
         if eqFootFin.find("십부") >= 0:
             pvpFoot = 2.4
+            pvpFootChk = 10
         elif eqFootFin.find("백부") >= 0:
             pvpFoot = 2.7
+            pvpFootChk = 100
         elif eqFootFin.find("천부") >= 0:
-            pvpFoot = 3.0    
+            pvpFoot = 3.0
+            pvpFootChk = 1000
         else :
             pvpFoot = 0
+            pvpFootChk = 0
         
         #머리
         if eqHeadFin.find("십부") >= 0:
             pvpHead = 1.6
+            pvpHeadChk = 10
         elif eqHeadFin.find("백부") >= 0:
             pvpHead = 1.8
+            pvpHeadChk = 100
         elif eqHeadFin.find("천부") >= 0:
             pvpHead = 2.0
+            pvpHeadChk = 1000
         else :
             pvpHead = 0
+            pvpHeadChk = 0
         
         #방패
         if eqSheildFin.find("십부") >= 0:
@@ -814,7 +862,92 @@ async def 검색(ctx,*,searchUsers):
         
         #await ctx.send(searchFin)
         
-        ChrInfo = discord.Embed(title = "{} / {} / {} / {}".format(serverName,nick,className,level), description="{} | {}".format(rankName,guildName),url=aionurl)
+        className2 = className[:2]
+        magicResChk = ""
+        blockChk = ""
+        magicalAcChk = ""
+        magicBoostChk = ""
+        pvpAccChk = pvpRing1Chk + pvpRing2Chk + pvpEar1Chk + pvpEar2Chk + pvpNecChk + pvpBeltChk
+        pvpEqChk = pvpTorsoChk + pvpLegChk + pvpHandChk + pvpFootChk + pvpShChk
+        eqEn = eqTorsoEn + eqLegEn + eqHandEn + eqFootEn + eqShEn
+        
+        #태그관련 변수확인
+        tag = ""
+        
+        if int(totstat['magicResist']) >= 1600 :
+            magicResChk = "마저 {}".format(className2)
+            tag = tag + "**`#{}`** ".format(magicResChk)
+        if int(totstat['block']) >= 2600 :
+            blockChk = "방방 {}".format(className2)
+            tag = tag + "**`#{}`** ".format(blockChk)
+        if int(totstat['magicalAccuracy']) >= 1800 :
+            magicalAcChk = "마적 {}".format(className2)
+            tag = tag + "**`#{}`** ".format(magicalAcChk)
+        if int(totstat['magicalBoost']) >= 2700 :
+            magicBoostChk = "풀마증 {}".format(className2)
+            tag = tag + "**`#{}`** ".format(magicBoostChk)
+        
+        if int(pvpAtt)>=10 and int(pvpAtt) <15:
+            pvpAttChk = "pvp추뎀 10%이상"
+            tag = tag + "**`#{}`** ".format(pvpAttChk)
+        elif int(pvpAtt)>=15 and int(pvpAtt) <20:
+            pvpAttChk = "pvp추뎀 15%이상"
+            tag = tag + "**`#{}`** ".format(pvpAttChk)
+        elif int(pvpAtt)>=20:
+            pvpAttChk = "pvp추뎀 20%이상"
+            tag = tag + "**`#{}`** ".format(pvpAttChk)
+        
+        if pvpEqChk == 50 :
+            pvpEqType = "(정예)십부 풀방어구"
+            tag = tag + "**`#{}`** ".format(pvpEqType)
+        elif pvpEqChk == 500 :
+            pvpEqType = "(정예)백부 풀방어구"
+            tag = tag + "**`#{}`** ".format(pvpEqType)
+        elif pvpEqChk == 5000 :
+            pvpEqType = "(정예)천부 풀방어구"        
+            tag = tag + "**`#{}`** ".format(pvpEqType)
+        
+        if eqEn >= 50:
+            if eqTorsoEn >=15 and eqLegEn >=15 and eqHandEn >=15 and eqFootEn >=15 and eqShEn >= 15:
+                eqEnTag = "전체 방어구 15강"
+                tag = tag + "**`#{}`** ".format(eqEnTag)
+            elif eqTorsoEn >=14 and eqLegEn >=14 and eqHandEn >=14 and eqFootEn >=14 and eqShEn >= 14:
+                eqEnTag = "전체 방어구 14강 이상"
+                tag = tag + "**`#{}`** ".format(eqEnTag)
+            elif eqTorsoEn >=13 and eqLegEn >=13 and eqHandEn >=13 and eqFootEn >=13 and eqShEn >= 13:
+                eqEnTag = "전체 방어구 13강 이상"
+                tag = tag + "**`#{}`** ".format(eqEnTag)
+            elif eqTorsoEn >=12 and eqLegEn >=12 and eqHandEn >=12 and eqFootEn >=12 and eqShEn >= 12:
+                eqEnTag = "전체 방어구 12강 이상"
+                tag = tag + "**`#{}`** ".format(eqEnTag)
+            elif eqTorsoEn >=11 and eqLegEn >=11 and eqHandEn >=11 and eqFootEn >=11 and eqShEn >= 11:
+                eqEnTag = "전체 방어구 11강 이상"
+                tag = tag + "**`#{}`** ".format(eqEnTag)
+            elif eqTorsoEn >=10 and eqLegEn >=10 and eqHandEn >=10 and eqFootEn >=10 and eqShEn >= 10:
+                eqEnTag = "전체 방어구 10강 이상"
+                tag = tag + "**`#{}`** ".format(eqEnTag)
+        
+        if tag == "":
+            tag = "특이사항없음"
+        file = openpyxl.load_workbook("nickname.xlsx")
+        sheet = file.active
+        for i in range(1,10000):
+            if sheet["A"+str(i)].value == serverName and sheet["B"+str(i)].value == nick:
+                charNick = sheet["C"+str(i)].value
+                break
+            else:
+                charNick = 0
+        #개인별명
+        if charNick == 0:
+            mainTit = "{} / {} / {} / {}".format(serverName,nick,className,level)
+        else :
+            mainTit = "{} / {} / {} / {}\n{}".format(serverName,nick,className,level,charNick)
+        #if nick == "제천대성" :
+        #    mainTit = "{} / {} / {} / {}\n변태 호법(마증 1900이하 로브님들 반성하세요)".format(serverName,nick,className,level)
+        #if nick == "헬곰" :
+        #    mainTit = "{} / {} / {} / {}\n헬스 궁성(3대 600이하 눈마주침 금지)".format(serverName,nick,className,level)
+            
+        ChrInfo = discord.Embed(title = mainTit, description="{} | {}".format(rankName,guildName),url=aionurl)
         ChrInfo.set_thumbnail(url="https://profileimg.plaync.com/game_profile_images/aion/images?gameServerKey={}&charKey={}".format(SID[disServer][0],uid))
         #ChrInfo.add_field(name="기본정보", value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\nPVP 관련수치는 정확하지 않으니\n참고만 부탁드립니다.".format(nick,className,level,guildName,rankName,totalKill,pvpDefFin,pvpAttFin),inline = False)
         ChrInfo.add_field(name="주요능력치",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(hp,magicResist,block,attack,accuracy,critical,magicalBoost,magicalAccuracy),inline = True)
@@ -823,6 +956,8 @@ async def 검색(ctx,*,searchUsers):
         #현재계급,전체킬,현재어포,오늘킬,오늘어포,이번주킬,이번주어포,지난주킬,지난주어포,pvp공,pvp방
         ChrInfo.add_field(name="장비",value="{}\n{}\n{}\n{}\n{}\n{}\n{}".format(eqWpFin,eqSheildFin,eqTorsoFin,eqShFin,eqLegFin,eqHandFin,eqFootFin),inline = False)
         ChrInfo.add_field(name="악세사리",value="{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}".format(eqHeadFin,eqNecFin,eqEar1,eqEar2,eqRing1,eqRing2,eqBeltFin,eqWingFin),inline = False)
+        if tag != "특이사항없음":
+            ChrInfo.add_field(name="주요특징",value=tag,inline = False)
         await ctx.send(embed=ChrInfo)
 
 @client.command()
@@ -841,5 +976,241 @@ async def 어비스템(ctx) :
     abyssEmbed.add_field (name="천부장 악세",value="목걸이,머리 : 307,400 (31)\n귀걸이 : 230,600 (24)\n 반지,허리 : 153,700 (16)",inline = True)
     
     await ctx.send(embed=abyssEmbed)
+    
+@client.command()
+async def 별명(ctx) :
+    file = openpyxl.load_workbook("nickname.xlsx")
+    sheet = file.active
+    channel = ctx.channel
+    serverList = "이스라펠,네자칸,지켈,바이젤,트리니엘,카이시넬,루미엘"
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == channel
 
-client.run('봇토큰')
+    #별명 서버설정
+    nickSetEmbed1 = discord.Embed(title = "별명 서버설정",description = "설정할 캐릭터의 서버를 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed1)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        server = msg.content
+        if serverList.find(server) >= 0:
+            nickServer = server
+        else:
+            await ctx.send("서버설정에 실패하였습니다.\n다시 시도해 주세요")
+            return
+
+    #별명 닉네임설정
+    nickSetEmbed2 = discord.Embed(title = "별명 캐릭터명설정",description = "설정할 캐릭터의 캐릭터명을 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed2)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        nickChr = msg.content
+    
+    #별명 별명설정
+    nickSetEmbed3 = discord.Embed(title = "별명 별명설정",description = "설정할 캐릭터의 별명을 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed3)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        nickNick = msg.content
+
+#    if len(nickInput) !=3:
+#        await ctx.send("입력방식이 잘못되었습니다\n입력순서\n!!별명 서버/닉네임/별명(할말)")
+#    else :
+#        await ctx.send("별명삭제 또는 변경용 비밀번호를 입력하세요")
+#        def check (m):
+#            return m.author == ctx.author and m.channel == channel
+#   
+#        try:
+#            msg = await client.wait_for('message',timeout=30.0, check=check)
+#        except asyncio.TimeoutError:
+#            await ctx.send("30초가 지나 종료합니다.")
+#        else :
+#            nickPass = msg.content
+#            await msg.delete()
+    
+    
+    for i in range(1,3000):
+        if sheet["A"+str(i)].value == nickServer and sheet["B"+str(i)].value == nickChr :
+            await ctx.send("이미 저장한 별명이 있습니다.")
+            break
+        else :
+            if sheet["A"+str(i)].value == ".":
+                sheet["A" + str(i)].value = nickServer      #서버
+                sheet["B" + str(i)].value = nickChr         #캐릭터명
+                sheet["C" + str(i)].value = nickNick        #별명
+                await ctx.send("별명이 저장되었습니다.")
+                break
+    file.save("nickname.xlsx")
+
+@client.command()
+async def 별명삭제(ctx) :
+    file = openpyxl.load_workbook("nickname.xlsx")
+    sheet = file.active
+    channel = ctx.channel
+    serverList = "이스라펠,네자칸,지켈,바이젤,트리니엘,카이시넬,루미엘"
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == channel
+
+    #별명 서버설정
+    nickSetEmbed1 = discord.Embed(title = "별명삭제 서버설정",description = "별명을 삭제할 캐릭터의 서버를 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed1)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        server = msg.content
+        if serverList.find(server) >= 0:
+            nickServer = server
+        else:
+            await ctx.send("서버설정에 실패하였습니다.\n다시 시도해 주세요")
+            return
+
+    #별명 닉네임설정
+    nickSetEmbed2 = discord.Embed(title = "별명삭제 캐릭터명설정",description = "별명을 삭제할 캐릭터의 캐릭터명을 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed2)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        nickChr = msg.content
+
+#    for i in range(1,3000):
+#        if sheet["A"+str(i)].value == nickServer and sheet["B"+str(i)].value == nickChr :
+#            print("별명삭제 시퀀스")
+#            channel = ctx.channel
+#            nickSetEmbed3 = discord.Embed(title = "별명삭제 패스워드확인",description = "별명을 삭제할 캐릭터의 별명삭제 비밀번호를 입력하세요.")
+#            await ctx.send(embed=nickSetEmbed3)
+#            def check (m):
+#                return m.author == ctx.author and m.channel == channel
+#            try:
+#                msg = await client.wait_for('message',timeout=30.0, check=check)
+#            except asyncio.TimeoutError:
+#                await ctx.send("30초가 지나 종료합니다.")
+#            else :
+#                if msg.content == nickNick or msg.content =="adminpassword1818":     #만능패스워드(관리자용)
+#                    await msg.delete()
+#                    sheet["A"+str(i)].value = "."
+#                    sheet["B"+str(i)].value = ""
+#                    sheet["C"+str(i)].value = ""
+#                    await ctx.send("별명이 삭제되었습니다.")
+#                else :
+#                    await msg.delete()
+#                    await ctx.send("변경/삭제용 패스워드가 맞지 않습니다.\n개발자에게 문의하세요.\n개발자 - 이스라펠 수배(검성)")
+#                break
+
+    for i in range(1,3000):
+        if sheet["A"+str(i)].value == nickServer:
+            if sheet["B"+str(i)].value == nickChr :
+                sheet["A"+str(i)].value = "."
+                sheet["B"+str(i)].value = ""
+                sheet["C"+str(i)].value = ""
+                await ctx.send("별명이 삭제되었습니다.")
+                break
+
+    file.save("nickname.xlsx")
+@client.command()
+async def 별명변경(ctx) :
+    file = openpyxl.load_workbook("nickname.xlsx")
+    sheet = file.active
+    channel = ctx.channel
+    serverList = "이스라펠,네자칸,지켈,바이젤,트리니엘,카이시넬,루미엘"
+    
+    def check(m):
+        return m.author == ctx.author and m.channel == channel
+
+    #별명 서버설정
+    nickSetEmbed1 = discord.Embed(title = "별명변경 서버설정",description = "별명을 변경할 캐릭터의 서버를 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed1)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        server = msg.content
+        if serverList.find(server) >= 0:
+            nickServer = server
+        else:
+            await ctx.send("서버설정에 실패하였습니다.\n다시 시도해 주세요")
+            return
+
+    #별명 닉네임설정
+    nickSetEmbed2 = discord.Embed(title = "별명변경 캐릭터명설정",description = "별명을 변경할 캐릭터의 캐릭터명을 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed2)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        nickChr = msg.content
+    
+    #별명 별명설정
+    nickSetEmbed3 = discord.Embed(title = "별명변경 별명설정",description = "별명을 변경할 캐릭터의 별명을 입력하세요.")
+
+    await ctx.send(embed=nickSetEmbed3)
+    
+    try:
+        msg = await client.wait_for('message',timeout=30.0, check=check)
+    except asyncio.TimeoutError:
+        await ctx.send("30초가 지나 종료합니다.")
+    else:
+        nickNick = msg.content
+
+#    for i in range(1,3000):
+#        if sheet["A"+str(i)].value == nickServer and sheet["B"+str(i)].value == nickChr :
+#            print("별명삭제 시퀀스")
+#            channel = ctx.channel
+#            nickSetEmbed3 = discord.Embed(title = "별명삭제 패스워드확인",description = "별명을 삭제할 캐릭터의 별명삭제 비밀번호를 입력하세요.")
+#            await ctx.send(embed=nickSetEmbed3)
+#            def check (m):
+#                return m.author == ctx.author and m.channel == channel
+#            try:
+#                msg = await client.wait_for('message',timeout=30.0, check=check)
+#            except asyncio.TimeoutError:
+#                await ctx.send("30초가 지나 종료합니다.")
+#            else :
+#                if msg.content == nickChr or msg.content =="adminpassword1818":     #만능패스워드(관리자용)
+#                    await msg.delete()
+#                    sheet["C"+str(i)].value = nickNick
+#                    await ctx.send("별명이 변경되었습니다.")
+#                else :
+#                    await msg.delete()
+#                    await ctx.send("변경/삭제용 패스워드가 맞지 않습니다.\n개발자에게 문의하세요.\n개발자 - 이스라펠 수배(검성)")
+#                break
+
+    for i in range(1,3000):
+        if sheet["A"+str(i)].value == nickServer:
+            if sheet["B"+str(i)].value == nickChr :
+                sheet["C"+str(i)].value = nickNick
+                await ctx.send("별명이 변경되었습니다.")
+                break
+
+    file.save("nickname.xlsx")
+
+#봇 코드
+client.run('ODM2ODU2Mjk2OTc1MTA2MDg4.YIkFKQ.JV0Q4YuxRP7kMrsmf7TvSCALKZc')
