@@ -1211,6 +1211,5 @@ async def 별명변경(ctx) :
                 break
 
     file.save("nickname.xlsx")
-
-#봇 코드
-client.run('ODM2ODU2Mjk2OTc1MTA2MDg4.YIkFKQ.JV0Q4YuxRP7kMrsmf7TvSCALKZc')
+#테스트용
+client.run('봇코드')
